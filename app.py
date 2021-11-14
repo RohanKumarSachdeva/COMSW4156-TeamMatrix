@@ -1,8 +1,8 @@
 from flask import Flask, Response, request
-from flask_cors import CORS
+#import CORS
 import json
 import logging
-
+from EncryptionServices.password_gen import password_gen
 from EncryptionServices.cipher import Cipher
 
 logging.basicConfig(level=logging.DEBUG)
@@ -10,7 +10,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 app = Flask(__name__)
-CORS(app)
+#CORS(app)
 crypt = Cipher()
 
 
@@ -27,6 +27,13 @@ def encrypt():
     app_name = request.args.get('application')
     password = request.args.get('password')
     req = crypt.get_by_template(app_name, password)
+    resp = Response(json.dumps(req, default=str), status=200, content_type="application/json")
+    return resp
+
+
+@app.route("/api/generate")
+def generate():
+    req = password_gen()
     resp = Response(json.dumps(req, default=str), status=200, content_type="application/json")
     return resp
 
