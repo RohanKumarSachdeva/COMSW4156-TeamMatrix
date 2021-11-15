@@ -108,7 +108,7 @@ class UpdateAPI(MethodResource, Resource):
         if result:
             cipher = Cipher()
             encrypt_pw, encryption_key = cipher.encipher(password)
-            db.add_record((user_id, app_name, encrypt_pw, encryption_key))
+            db.update_record((user_id, app_name, encrypt_pw, encryption_key))
 
             return {
                 'message': 'Password updated successfully!'
@@ -117,6 +117,20 @@ class UpdateAPI(MethodResource, Resource):
             return {
                 'message': 'No such application exists. Please use /create endpoint.'
             }
+
+
+@doc(description='Password delete endpoint.', tags=['password manager'])
+@use_kwargs(DecryptRequestSchema, location='query')
+@marshal_with(EncryptResponseSchema)  # marshalling
+class DeleteAPI(MethodResource, Resource):
+    def delete(self, **kwargs):
+        app_name = kwargs['application']
+        user_id = 'abc@gmail.com'
+
+        db.delete_record(user_id, app_name)
+        return {
+            'message': f'Deleted passwords for {app_name} application(s).'
+        }
 
 
 @app.route('/')
@@ -151,7 +165,9 @@ if __name__ == '__main__':
     api.add_resource(CreateAPI, '/create')
     api.add_resource(RetrieveAPI, '/retrieve')
     api.add_resource(UpdateAPI, '/update')
+    api.add_resource(DeleteAPI, '/delete')
     docs.register(CreateAPI)
     docs.register(RetrieveAPI)
     docs.register(UpdateAPI)
+    docs.register(DeleteAPI)
     app.run(host="0.0.0.0", port=5001, debug=True)
