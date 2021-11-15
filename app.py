@@ -160,11 +160,15 @@ app.config.update({
 docs = FlaskApiSpec(app)
 
 
-@app.route("/api/generate")
-def generate():
-    req = password_gen()
-    resp = Response(json.dumps(req, default=str), status=200, content_type="application/json")
-    return resp
+@doc(description='Generate endpoint.', tags=['password manager'])
+@marshal_with(EncryptResponseSchema)  # marshalling
+class GenerateAPI(MethodResource, Resource):
+    def get(self):
+        req = password_gen()
+        resp = Response(json.dumps(req, default=str), status=200, content_type="application/json")
+        return {
+            'message': resp
+        }
 
 
 if __name__ == '__main__':
@@ -173,8 +177,10 @@ if __name__ == '__main__':
     api.add_resource(RetrieveAPI, '/retrieve')
     api.add_resource(UpdateAPI, '/update')
     api.add_resource(DeleteAPI, '/delete')
+    api.add_resource(GenerateAPI, '/generate')
     docs.register(CreateAPI)
     docs.register(RetrieveAPI)
     docs.register(UpdateAPI)
     docs.register(DeleteAPI)
+    docs.register(GenerateAPI)
     app.run(host="0.0.0.0", port=5001, debug=True)
