@@ -29,7 +29,7 @@ CORS(app)
 
 
 class EncryptResponseSchema(Schema):
-    data = fields.Str(default='')
+    message = fields.Str(default='')
 
 
 class EncryptRequestSchema(Schema):
@@ -44,10 +44,16 @@ class DecryptRequestSchema(Schema):
 @doc(description='Encryption endpoint.', tags=['password manager'])
 @use_kwargs(EncryptRequestSchema, location='query')
 @marshal_with(EncryptResponseSchema)  # marshalling
-class EncryptAPI(MethodResource, Resource):
+class CreateAPI(MethodResource, Resource):
     def post(self, **kwargs):
         app_name = kwargs['application']
         password = kwargs['password']
+
+        if app_name == 'all':
+            return {
+                'message': 'Invalid application name.'
+            }
+
         user_id = 'abc@gmail.com'
         result = db.get_record(user_id, app_name)
         if not result:
@@ -56,14 +62,18 @@ class EncryptAPI(MethodResource, Resource):
             db.add_record((user_id, app_name, encrypt_pw, encryption_key))
 
             return {
-                'data': 'Test data'
+                'message': 'Password created successfully!'
+            }
+        else:
+            return {
+                'message': 'A password for this application exists already. Please use /update endpoint.'
             }
 
 
 @doc(description='Decryption endpoint.', tags=['password manager'])
 @use_kwargs(DecryptRequestSchema, location='query')
 @marshal_with(EncryptResponseSchema)  # marshalling
-class DecryptAPI(MethodResource, Resource):
+class RetrieveAPI(MethodResource, Resource):
     def get(self, **kwargs):
         app_name = kwargs['application']
 
@@ -75,7 +85,51 @@ class DecryptAPI(MethodResource, Resource):
             plain_password = cipher.decipher(row[1])
             passwords[row[0]] = plain_password
         return {
-            'data': passwords
+            'message': passwords
+        }
+
+
+@doc(description='Password update endpoint.', tags=['password manager'])
+@use_kwargs(EncryptRequestSchema, location='query')
+@marshal_with(EncryptResponseSchema)  # marshalling
+class UpdateAPI(MethodResource, Resource):
+    def post(self, **kwargs):
+        app_name = kwargs['application']
+        password = kwargs['password']
+
+        if app_name == 'all':
+            return {
+                'message': 'Invalid application name.'
+            }
+
+        user_id = 'abc@gmail.com'
+        result = db.get_record(user_id, app_name)
+
+        if result:
+            cipher = Cipher()
+            encrypt_pw, encryption_key = cipher.encipher(password)
+            db.update_record((user_id, app_name, encrypt_pw, encryption_key))
+
+            return {
+                'message': 'Password updated successfully!'
+            }
+        else:
+            return {
+                'message': 'No such application exists. Please use /create endpoint.'
+            }
+
+
+@doc(description='Password delete endpoint.', tags=['password manager'])
+@use_kwargs(DecryptRequestSchema, location='query')
+@marshal_with(EncryptResponseSchema)  # marshalling
+class DeleteAPI(MethodResource, Resource):
+    def delete(self, **kwargs):
+        app_name = kwargs['application']
+        user_id = 'abc@gmail.com'
+
+        db.delete_record(user_id, app_name)
+        return {
+            'message': f'Deleted passwords for {app_name} application(s).'
         }
 
 
@@ -115,8 +169,12 @@ def generate():
 
 if __name__ == '__main__':
     db.init_db()
-    api.add_resource(EncryptAPI, '/create')
-    api.add_resource(DecryptAPI, '/retrieve')
-    docs.register(EncryptAPI)
-    docs.register(DecryptAPI)
+    api.add_resource(CreateAPI, '/create')
+    api.add_resource(RetrieveAPI, '/retrieve')
+    api.add_resource(UpdateAPI, '/update')
+    api.add_resource(DeleteAPI, '/delete')
+    docs.register(CreateAPI)
+    docs.register(RetrieveAPI)
+    docs.register(UpdateAPI)
+    docs.register(DeleteAPI)
     app.run(host="0.0.0.0", port=5001, debug=True)
