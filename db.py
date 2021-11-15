@@ -62,7 +62,7 @@ def get_record(user_id, app_name):
         conn = sqlite3.connect('sqlite_db')
         select_q = "SELECT app_name, password, key" \
                    " FROM CIPHER WHERE user_id = ?"
-        args = (user_id)
+        args = (user_id, )
         if app_name != 'all':
             select_q += " AND app_name = ?"
             args = (user_id, app_name)
@@ -114,7 +114,7 @@ def delete_record(user_id, app_name):
     try:
         conn = sqlite3.connect('sqlite_db')
         select_q = "DELETE FROM CIPHER WHERE user_id=?"
-        args = (user_id)
+        args = (user_id, )
         if app_name != 'all':
             select_q += " AND app_name=?"
             args = (user_id, app_name)
