@@ -164,10 +164,8 @@ docs = FlaskApiSpec(app)
 @marshal_with(EncryptResponseSchema)  # marshalling
 class GenerateAPI(MethodResource, Resource):
     def get(self):
-        req = password_gen()
-        resp = Response(json.dumps(req, default=str), status=200, content_type="application/json")
         return {
-            'message': resp
+            'message': password_gen()
         }
 
 
