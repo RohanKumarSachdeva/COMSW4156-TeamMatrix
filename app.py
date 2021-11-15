@@ -26,8 +26,10 @@ def encrypt():
     # get the value of query parameters (i.e. ?origins=some-value)
     app_name = request.args.get('application')
     password = request.args.get('password')
-    req = crypt.get_by_template(app_name, password)
+    req = crypt.encipher(password)
+    print(req)
     resp = Response(json.dumps(req, default=str), status=200, content_type="application/json")
+    print(resp)
     return resp
 
 
