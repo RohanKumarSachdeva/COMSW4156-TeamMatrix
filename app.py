@@ -4,18 +4,19 @@ from flask_cors import CORS
 
 from flask_apispec import marshal_with, doc, use_kwargs
 from flask_apispec.views import MethodResource
-from marshmallow import Schema, fields
-
-from apispec import APISpec
-from apispec.ext.marshmallow import MarshmallowPlugin
 from flask_apispec.extension import FlaskApiSpec
 
+from apispec.ext.marshmallow import MarshmallowPlugin
+from apispec import APISpec
+
+from marshmallow import Schema, fields
 from webargs.flaskparser import parser, abort
 
 import json
 import logging
 import db
 
+from EncryptionServices.password_gen import password_gen
 from EncryptionServices.cipher import Cipher
 
 logging.basicConfig(level=logging.DEBUG)
@@ -25,7 +26,6 @@ logger.setLevel(logging.INFO)
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
-crypt = Cipher()
 
 
 class EncryptResponseSchema(Schema):
@@ -104,6 +104,13 @@ app.config.update({
 })
 
 docs = FlaskApiSpec(app)
+
+
+@app.route("/api/generate")
+def generate():
+    req = password_gen()
+    resp = Response(json.dumps(req, default=str), status=200, content_type="application/json")
+    return resp
 
 
 if __name__ == '__main__':
