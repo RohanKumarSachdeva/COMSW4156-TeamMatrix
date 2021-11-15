@@ -61,15 +61,15 @@ def get_record(user_id, app_name):
     try:
         conn = sqlite3.connect('sqlite_db')
         select_q = "SELECT app_name, password, key" \
-                   " FROM CIPHER WHERE user_id=%s"
+                   " FROM CIPHER WHERE user_id = ?"
         args = (user_id)
         if app_name != 'all':
-            select_q += " AND app_name=%s"
+            select_q += " AND app_name = ?"
             args = (user_id, app_name)
         cur = conn.cursor()
-        cur.execute(select_q, args)
+
         list_passwords = []
-        for record in cur.fetchone():
+        for record in cur.execute(select_q, args):
             list_passwords.append((record[0], record[1], record[2]))
     except Error as e:
         raise e
@@ -89,8 +89,8 @@ def update_record(record):
     conn = None
     try:
         conn = sqlite3.connect('sqlite_db')
-        update_q = "UPDATE CIPHER SET password=%s, key=%s" \
-                   " WHERE user_id=%s AND app_name=%s"
+        update_q = "UPDATE CIPHER SET password=?, key=?" \
+                   " WHERE user_id=? AND app_name=?"
         args = (record[2], record[3], record[0], record[1])
         cur = conn.cursor()
         cur.execute(update_q, args)
@@ -113,10 +113,10 @@ def delete_record(user_id, app_name):
     conn = None
     try:
         conn = sqlite3.connect('sqlite_db')
-        select_q = "DELETE FROM CIPHER WHERE user_id=%s"
+        select_q = "DELETE FROM CIPHER WHERE user_id=?"
         args = (user_id)
         if app_name != 'all':
-            select_q += " AND app_name=%s"
+            select_q += " AND app_name=?"
             args = (user_id, app_name)
         cur = conn.cursor()
         cur.execute(select_q, args)
