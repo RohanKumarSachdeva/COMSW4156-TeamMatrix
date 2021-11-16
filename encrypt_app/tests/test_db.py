@@ -1,9 +1,9 @@
 import unittest
 import sys
 import os
-import db
-
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
+
+import db
 
 
 class Test_Testdb(unittest.TestCase):
