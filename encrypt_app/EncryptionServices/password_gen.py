@@ -8,6 +8,7 @@ def password_gen(length=12):
     :return:
     """
     params = {"num": True, "char": True, "caps": True, "len": length}
-    response = requests.get("https://passwordinator.herokuapp.com/generate", params=params)
+    response = requests.get("https://passwordinator.herokuapp.com/generate",
+                            params=params)
     password = response.json()['data']
     return password

@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask
 from flask_restful import Resource, Api
 from flask_cors import CORS
 
@@ -12,7 +12,6 @@ from apispec import APISpec
 from marshmallow import Schema, fields
 from webargs.flaskparser import parser, abort
 
-import json
 import logging
 import db
 
@@ -66,7 +65,8 @@ class CreateAPI(MethodResource, Resource):
             }
         else:
             return {
-                'message': 'A password for this application exists already. Please use /update endpoint.'
+                'message': 'A password for this application exists already.'
+                           'Please use /update endpoint.'
             }
 
 
@@ -115,7 +115,8 @@ class UpdateAPI(MethodResource, Resource):
             }
         else:
             return {
-                'message': 'No such application exists. Please use /create endpoint.'
+                'message': 'No such application exists.'
+                           'Please use /create endpoint.'
             }
 
 
@@ -139,7 +140,8 @@ def hello_world():
 
 
 @parser.error_handler
-def handle_request_parsing_error(err, req, schema, *, error_status_code, error_headers):
+def handle_request_parsing_error(err, req, schema, *,
+                                 error_status_code, error_headers):
     """webargs error handler that uses Flask-RESTful's abort function to return
     a JSON error response to the client.
     """
