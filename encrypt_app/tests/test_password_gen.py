@@ -2,9 +2,9 @@ import unittest
 import re
 import sys
 import os
-from EncryptionServices.password_gen import password_gen
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
+from EncryptionServices.password_gen import password_gen
 
 
 class TestGenerate(unittest.TestCase):

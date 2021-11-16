@@ -1,9 +1,9 @@
 import unittest
 import sys
 import os
-from EncryptionServices.cipher import Cipher
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
+from EncryptionServices.cipher import Cipher
 
 
 class TestCipher(unittest.TestCase):
