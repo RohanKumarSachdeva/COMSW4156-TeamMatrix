@@ -1,8 +1,9 @@
 import unittest
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
 from EncryptionServices.cipher import Cipher
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
 
 
 class TestCipher(unittest.TestCase):
@@ -36,4 +37,3 @@ class TestCipher(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
