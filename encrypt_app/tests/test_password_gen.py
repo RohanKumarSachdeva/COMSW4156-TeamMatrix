@@ -13,7 +13,7 @@ class TestGenerate(unittest.TestCase):
         """
         length = 12
         password = {'message': password_gen(length)}
-        self.assertEqual(len(password["message"]), 12)
+        self.assertEqual(len(password["message"]), length)
 
     def test_validity(self):
         """
