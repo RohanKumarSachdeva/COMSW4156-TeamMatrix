@@ -1,0 +1,150 @@
+{
+  "definitions": {
+    "EncryptResponse": {
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }, 
+      "type": "object"
+    }
+  }, 
+  "info": {
+    "title": "ASE Project", 
+    "version": "v1"
+  }, 
+  "paths": {
+    "/create": {
+      "post": {
+        "description": "Encryption endpoint.", 
+        "parameters": [
+          {
+            "description": "Application Name", 
+            "in": "query", 
+            "name": "application", 
+            "required": true, 
+            "type": "string"
+          }, 
+          {
+            "description": "Plaintext Password", 
+            "in": "query", 
+            "name": "password", 
+            "required": true, 
+            "type": "string"
+          }
+        ], 
+        "responses": {
+          "default": {
+            "description": "", 
+            "schema": {
+              "$ref": "#/definitions/EncryptResponse"
+            }
+          }
+        }, 
+        "tags": [
+          "password manager"
+        ]
+      }
+    }, 
+    "/delete": {
+      "delete": {
+        "description": "Password delete endpoint.", 
+        "parameters": [
+          {
+            "description": "Application Name", 
+            "in": "query", 
+            "name": "application", 
+            "required": true, 
+            "type": "string"
+          }
+        ], 
+        "responses": {
+          "default": {
+            "description": "", 
+            "schema": {
+              "$ref": "#/definitions/EncryptResponse"
+            }
+          }
+        }, 
+        "tags": [
+          "password manager"
+        ]
+      }
+    }, 
+    "/generate": {
+      "get": {
+        "description": "Generate endpoint.", 
+        "parameters": [], 
+        "responses": {
+          "default": {
+            "description": "", 
+            "schema": {
+              "$ref": "#/definitions/EncryptResponse"
+            }
+          }
+        }, 
+        "tags": [
+          "password manager"
+        ]
+      }
+    }, 
+    "/retrieve": {
+      "get": {
+        "description": "Decryption endpoint.", 
+        "parameters": [
+          {
+            "description": "Application Name", 
+            "in": "query", 
+            "name": "application", 
+            "required": true, 
+            "type": "string"
+          }
+        ], 
+        "responses": {
+          "default": {
+            "description": "", 
+            "schema": {
+              "$ref": "#/definitions/EncryptResponse"
+            }
+          }
+        }, 
+        "tags": [
+          "password manager"
+        ]
+      }
+    }, 
+    "/update": {
+      "post": {
+        "description": "Password update endpoint.", 
+        "parameters": [
+          {
+            "description": "Application Name", 
+            "in": "query", 
+            "name": "application", 
+            "required": true, 
+            "type": "string"
+          }, 
+          {
+            "description": "Plaintext Password", 
+            "in": "query", 
+            "name": "password", 
+            "required": true, 
+            "type": "string"
+          }
+        ], 
+        "responses": {
+          "default": {
+            "description": "", 
+            "schema": {
+              "$ref": "#/definitions/EncryptResponse"
+            }
+          }
+        }, 
+        "tags": [
+          "password manager"
+        ]
+      }
+    }
+  }, 
+  "swagger": "2.0.0"
+}
