@@ -24,6 +24,10 @@
 - Delete Endpoint: 
     `curl -X DELETE "0.0.0.0:5001/delete?application=google"`
     
+**To run system-tests:**
+
+`./system_tests.sh`
+    
     
  ## API Documentation:
  - Generate Endpoint: Enables user to Generate a password for an application.
