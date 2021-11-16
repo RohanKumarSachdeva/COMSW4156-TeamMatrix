@@ -1,8 +1,10 @@
 import unittest
 import re
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
+
 from EncryptionServices.password_gen import password_gen
-
-
 class TestGenerate(unittest.TestCase):
     def test_length(self):
         """
