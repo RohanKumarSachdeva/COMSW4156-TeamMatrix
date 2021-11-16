@@ -1,6 +1,9 @@
 import unittest
-from .. import db
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
 
+import db
 
 class Test_Testdb(unittest.TestCase):
 
@@ -32,9 +35,10 @@ class Test_Testdb(unittest.TestCase):
         """
         record = ('user1', 'app1', 'pass1', 'key1')
         db.add_record(record)
-        db.update_record(record)
+        new_record = (record[0], record[1], 'pass2', 'key2')
+        db.update_record(new_record)
         record_returned = db.get_record(record[0], record[1])[0]
-        self.assertEqual((record[2], record[3]),
+        self.assertEqual((new_record[2], new_record[3]),
                          (record_returned[1], record_returned[2]))
 
     def test_delete_record(self):
@@ -44,7 +48,8 @@ class Test_Testdb(unittest.TestCase):
         record = ('user1', 'app1', 'pass1', 'key1')
         db.add_record(record)
         db.delete_record(record[0],record[1])
-        record_returned = db.get_record(record[0], record[1])[0]
-        self.assertEqual([], record_returned)
+        record_returned = db.get_record(record[0], record[1])
+        self.assertEqual(0, len(record_returned))
 
-
+if __name__ == '__main__':
+    unittest.main()
