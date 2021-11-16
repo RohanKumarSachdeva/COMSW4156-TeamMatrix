@@ -32,7 +32,7 @@ class Test_Testdb(unittest.TestCase):
         """
         record = ('user1', 'app1', 'pass1', 'key1')
         db.add_record(record)
-        db.update_record(['user1', 'app1', 'pass2', 'key1'])
+        db.update_record(record)
         record_returned = db.get_record(record[0], record[1])[0]
         self.assertEqual((record[2], record[3]),
                          (record_returned[1], record_returned[2]))
@@ -43,6 +43,8 @@ class Test_Testdb(unittest.TestCase):
         """
         record = ('user1', 'app1', 'pass1', 'key1')
         db.add_record(record)
-        db.delete_record(['user1','app1'])
+        db.delete_record(record[0],record[1])
         record_returned = db.get_record(record[0], record[1])[0]
         self.assertEqual([], record_returned)
+
+
