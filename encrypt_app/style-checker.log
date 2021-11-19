@@ -1,3 +1,4 @@
 ./tests/test_cipher.py:6:1: E402 module level import not at top of file
 ./tests/test_db.py:6:1: E402 module level import not at top of file
 ./tests/test_password_gen.py:7:1: E402 module level import not at top of file
+./tests/test_app.py:7:1: E402 module level import not at top of file
