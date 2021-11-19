@@ -22,7 +22,6 @@ class test_app(unittest.TestCase):
         """
         with self.app.test_client() as c:
             response = c.get('/')
-            print(response.data)
             self.assertEqual(response.status_code, 200)
 
     def test_generate(self):
@@ -32,7 +31,6 @@ class test_app(unittest.TestCase):
         """
         with self.app.test_client() as c:
             response = c.get('/generate')
-            print(response.data)
             self.assertEqual(response.status_code, 200)
 
     def test_create_retrieve(self):
@@ -45,7 +43,6 @@ class test_app(unittest.TestCase):
         with self.app.test_client() as c:
             response = c.post(f'/create?application={app_name}'
                               f'&password={password}')
-            print(response.data)
             self.assertEqual(response.status_code, 200)
 
             response = c.get(f'/retrieve?application={app_name}')
@@ -75,7 +72,6 @@ class test_app(unittest.TestCase):
             # Now updating the application password
             response = c.post(f'/update?application={app_name}&'
                               f'password={new_password}')
-            print(response.data)
             self.assertEqual(response.status_code, 200)
 
             response = c.get(f'/retrieve?application={app_name}')
@@ -96,7 +92,6 @@ class test_app(unittest.TestCase):
         with self.app.test_client() as c:
             c.post(f'/create?application={app_name}&password={password}')
             response = c.delete(f'/delete?application={app_name}')
-            print(response.data)
             self.assertEqual(response.status_code, 200)
 
             response = c.get(f'/retrieve?application={app_name}')

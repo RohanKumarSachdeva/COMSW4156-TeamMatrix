@@ -16,7 +16,7 @@ class Cipher:
         :return:
         """
         e_password = self.crypt.encrypt(bytes(password, 'utf-8'))
-        print(f"Encrypted password: {str(e_password, 'utf8')}")
+        # print(f"Encrypted password: {str(e_password, 'utf8')}")
         return e_password.decode(), self.key
 
     def decipher(self, e_password):
@@ -26,5 +26,5 @@ class Cipher:
         :return:
         """
         d_password = self.crypt.decrypt(bytes(e_password, 'utf-8'))
-        print(f"Decrypted password: {str(d_password, 'utf8')}")
+        # print(f"Decrypted password: {str(d_password, 'utf8')}")
         return d_password.decode()

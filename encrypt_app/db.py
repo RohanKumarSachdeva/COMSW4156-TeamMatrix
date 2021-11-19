@@ -18,7 +18,6 @@ def init_db():
                      '(user_id TEXT, app_name TEXT,' +
                      'password TEXT, key TEXT)')
         conn.commit()
-        print('Database Online, table created')
     except Error as e:
         raise e
 
@@ -135,7 +134,6 @@ def clear():
         conn = sqlite3.connect('sqlite_db')
         conn.execute("DROP TABLE CIPHER")
         conn.commit()
-        print('Database cleared')
     except Error as e:
         print(e)
 
