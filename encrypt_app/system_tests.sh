@@ -31,12 +31,13 @@ RESPONSE=$(curl -s -X GET "${API_SERVER}/retrieve?application=${APP_NAME}")
 X=$(echo $RESPONSE | jq -r '.message')
 resp_message=$(echo $RESPONSE | jq -r '.message')
 
-if [ "${resp_message}" == "{'${APP_NAME}': '${DUMMY_PASSWORD}'}" ]; then
+if [[ $resp_message == *"${DUMMY_PASSWORD}"* ]]; then
     echo "/retrieve endpoint test passed"
 else
     echo "/retrieve endpoint test failed"
     exit 1
 fi
+
 
 NEW_PASSWORD="password987"
 RESPONSE=$(curl -s -X POST "${API_SERVER}/update?application=${APP_NAME}&password=${NEW_PASSWORD}")
