@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, request
 from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 import logging
@@ -28,7 +28,12 @@ app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
 
 def get_app():
+    db.init_db()
     return app
+
+
+def clear_app():
+    db.clear()
 
 
 @app.route('/')
