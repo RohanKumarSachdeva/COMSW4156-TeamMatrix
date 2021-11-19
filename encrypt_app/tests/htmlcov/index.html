@@ -18,7 +18,7 @@
 <div id="header">
     <div class="content">
         <h1>Coverage report:
-            <span class="pc_cov">91%</span>
+            <span class="pc_cov">88%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <form id="filter_container">
@@ -35,6 +35,8 @@
         <span class="key">s</span>
         <span class="key">m</span>
         <span class="key">x</span>
+        <span class="key">b</span>
+        <span class="key">p</span>
         <span class="key">c</span> &nbsp; change column sorting
     </p>
     </div>
@@ -47,60 +49,94 @@
                 <th class="shortkey_s">statements</th>
                 <th class="shortkey_m">missing</th>
                 <th class="shortkey_x">excluded</th>
+                <th class="shortkey_b">branches</th>
+                <th class="shortkey_p">partial</th>
                 <th class="right shortkey_c">coverage</th>
             </tr>
         </thead>
         <tfoot>
             <tr class="total">
                 <td class="name left">Total</td>
-                <td>174</td>
-                <td>16</td>
+                <td>304</td>
+                <td>22</td>
                 <td>0</td>
-                <td class="right" data-ratio="158 174">91%</td>
+                <td>45</td>
+                <td>20</td>
+                <td class="right" data-ratio="307 349">88%</td>
             </tr>
         </tfoot>
         <tbody>
             <tr class="file">
-                <td class="name left"><a href="_Users_nirvishishrivastava_Documents_ASE_COMSW4156-TeamMatrix_encrypt_app_EncryptionServices_cipher_py.html">/Users/nirvishishrivastava/Documents/ASE/COMSW4156-TeamMatrix/encrypt_app/EncryptionServices/cipher.py</a></td>
-                <td>15</td>
-                <td>1</td>
+                <td class="name left"><a href="_Users_rishabh_columbia_academics_fall2021_ase_w4156_COMSW4156-TeamMatrix_encrypt_app_EncryptionServices_cipher_py.html">/Users/rishabh/columbia/academics/fall2021/ase_w4156/COMSW4156-TeamMatrix/encrypt_app/EncryptionServices/cipher.py</a></td>
+                <td>13</td>
                 <td>0</td>
-                <td class="right" data-ratio="14 15">93%</td>
+                <td>0</td>
+                <td>2</td>
+                <td>0</td>
+                <td class="right" data-ratio="15 15">100%</td>
             </tr>
             <tr class="file">
-                <td class="name left"><a href="_Users_nirvishishrivastava_Documents_ASE_COMSW4156-TeamMatrix_encrypt_app_EncryptionServices_password_gen_py.html">/Users/nirvishishrivastava/Documents/ASE/COMSW4156-TeamMatrix/encrypt_app/EncryptionServices/password_gen.py</a></td>
+                <td class="name left"><a href="_Users_rishabh_columbia_academics_fall2021_ase_w4156_COMSW4156-TeamMatrix_encrypt_app_EncryptionServices_password_gen_py.html">/Users/rishabh/columbia/academics/fall2021/ase_w4156/COMSW4156-TeamMatrix/encrypt_app/EncryptionServices/password_gen.py</a></td>
                 <td>6</td>
+                <td>0</td>
+                <td>0</td>
                 <td>0</td>
                 <td>0</td>
                 <td class="right" data-ratio="6 6">100%</td>
             </tr>
             <tr class="file">
-                <td class="name left"><a href="_Users_nirvishishrivastava_Documents_ASE_COMSW4156-TeamMatrix_encrypt_app_db_py.html">/Users/nirvishishrivastava/Documents/ASE/COMSW4156-TeamMatrix/encrypt_app/db.py</a></td>
-                <td>82</td>
+                <td class="name left"><a href="_Users_rishabh_columbia_academics_fall2021_ase_w4156_COMSW4156-TeamMatrix_encrypt_app_app_py.html">/Users/rishabh/columbia/academics/fall2021/ase_w4156/COMSW4156-TeamMatrix/encrypt_app/app.py</a></td>
+                <td>75</td>
+                <td>6</td>
+                <td>0</td>
+                <td>12</td>
+                <td>5</td>
+                <td class="right" data-ratio="76 87">87%</td>
+            </tr>
+            <tr class="file">
+                <td class="name left"><a href="_Users_rishabh_columbia_academics_fall2021_ase_w4156_COMSW4156-TeamMatrix_encrypt_app_db_py.html">/Users/rishabh/columbia/academics/fall2021/ase_w4156/COMSW4156-TeamMatrix/encrypt_app/db.py</a></td>
+                <td>80</td>
                 <td>12</td>
                 <td>0</td>
-                <td class="right" data-ratio="70 82">85%</td>
+                <td>21</td>
+                <td>10</td>
+                <td class="right" data-ratio="79 101">78%</td>
+            </tr>
+            <tr class="file">
+                <td class="name left"><a href="test_app_py.html">test_app.py</a></td>
+                <td>59</td>
+                <td>1</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="59 61">97%</td>
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_cipher_py.html">test_cipher.py</a></td>
                 <td>22</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="21 22">95%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="22 24">92%</td>
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_db_py.html">test_db.py</a></td>
                 <td>30</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="29 30">97%</td>
+                <td>2</td>
+                <td>1</td>
+                <td class="right" data-ratio="30 32">94%</td>
             </tr>
             <tr class="file">
                 <td class="name left"><a href="test_password_gen_py.html">test_password_gen.py</a></td>
                 <td>19</td>
                 <td>1</td>
                 <td>0</td>
-                <td class="right" data-ratio="18 19">95%</td>
+                <td>4</td>
+                <td>2</td>
+                <td class="right" data-ratio="20 23">87%</td>
             </tr>
         </tbody>
     </table>
@@ -112,7 +148,7 @@
     <div class="content">
         <p>
             <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-11-15 23:51 -0500
+            created at 2021-11-19 16:14 -0500
         </p>
     </div>
 </div>
