@@ -40,5 +40,5 @@
 
 - Delete Endpoint: Enables user to delete password for particular or all applications.
 
- The API Spec can be found [here](https://github.com/RohanKumarSachdeva/COMSW4156-TeamMatrix/blob/main/encrypt_app/static/api-spec.json)
+ The API Spec can be found [here](https://github.com/RohanKumarSachdeva/COMSW4156-TeamMatrix/blob/main/documentation/api_spec_password_manager.png)
 
