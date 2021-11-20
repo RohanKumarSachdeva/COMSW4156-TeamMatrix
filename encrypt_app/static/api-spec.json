@@ -16,7 +16,7 @@
   "paths": {
     "/create": {
       "post": {
-        "description": "Encryption endpoint.",
+        "description": "/create endpoint:\n\nThis API is intended to be used for creation of a password for an application. The user passes an application name and a password to this endpoint which is then saved in encrypted format.\n\nUsage: curl -X POST \"0.0.0.0:5001/create?application=app1&password=qwerty@098",
         "parameters": [
           {
             "description": "Application Name",
@@ -48,7 +48,7 @@
     },
     "/delete": {
       "delete": {
-        "description": "Password delete endpoint.",
+        "description": "/delete endpoint:\n\nThis API is intended to be used for deletion of the password for an application. The user passes an application name and this endpoint deletes its corrsponding password if it exists.\n\nUsage: curl -X DELETE \"0.0.0.0:5001/delete?application=app1",
         "parameters": [
           {
             "description": "Application Name",
@@ -73,7 +73,7 @@
     },
     "/generate": {
       "get": {
-        "description": "Generate endpoint.",
+        "description": "/generate endpoint:\n\nThis API is intended to be used for generation of a strong password for an application. The user invokes the endpoint and receives a secure password.\n\nUsage: curl -X GET \"0.0.0.0:5001/generate",
         "parameters": [],
         "responses": {
           "default": {
@@ -90,7 +90,7 @@
     },
     "/retrieve": {
       "get": {
-        "description": "Decryption endpoint.",
+        "description": "/retrieve endpoint:\n\nThis API is intended to be used for retrieval of a password for an application. The user passes an application name and this endpoint decrypts the saved password and returns it in plaintext.\n\nUsage: curl -X GET \"0.0.0.0:5001/retrieve?application=app1",
         "parameters": [
           {
             "description": "Application Name",
@@ -115,7 +115,7 @@
     },
     "/update": {
       "post": {
-        "description": "Password update endpoint.",
+        "description": "/update endpoint:\n\nThis API is intended to be used for updation of a password for an application. The user passes an application name and a new password to this endpoint which is then saved in encrypted format.\n\nUsage: curl -X POST \"0.0.0.0:5001/update?application=app1&password=new_qwerty@098",
         "parameters": [
           {
             "description": "Application Name",
