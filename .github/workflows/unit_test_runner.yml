@@ -19,7 +19,5 @@ jobs:
           architecture: x64
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Run cd
-        run: cd encrypt_app/tests
       - name: Run Test
-        run: python -m unittest ./test_db.py
+        run: python -m unittest encrypt_app/tests/test_db.py
