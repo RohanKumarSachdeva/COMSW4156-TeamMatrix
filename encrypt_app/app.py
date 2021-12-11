@@ -122,7 +122,33 @@ def delete():
 
 @app.route('/generate', methods=['GET'])
 def generate():
-    return {'message': password_gen()}
+    num = request.args.get('num', 'true')
+    length = request.args.get('len', '12')
+    spchar = request.args.get('spchar', 'true')
+    caps = request.args.get('caps', 'true')
+
+    if not length.isdigit():
+        return {
+                'message': 'num query param is invalid'
+            }
+
+    length = int(length)
+    if int(length) < 8:
+        return {
+            'message': 'password length should be atleast 8'
+        }
+    for query_param in [num, spchar, caps]:
+        if query_param.lower() not in ['true', 'false']:
+            return {
+                'message': '/generate endpoint only accepts true '
+                           'or false values for query string params.'
+            }
+
+    num = True if num.lower() == 'true' else False
+    spchar = True if spchar.lower() == 'true' else False
+    caps = True if caps.lower() == 'true' else False
+    print("Input received:", num, spchar, caps)
+    return {'message': password_gen(length, num, spchar, caps)}
 
 
 if __name__ == '__main__':
