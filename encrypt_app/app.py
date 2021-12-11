@@ -197,7 +197,7 @@ def generate():
 
 @app.route('/welcome')
 @login_is_required
-def protected_area():
+def welcome():
 
     return f"Welcome {session['name']} you are logged in with email {session['email']}. " \
            f"You can now Create, Retrieve, Update and Delete passwords" \
