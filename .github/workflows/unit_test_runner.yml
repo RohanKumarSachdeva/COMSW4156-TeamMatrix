@@ -15,10 +15,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build and run test
         run:
-          cd ecrypt_app/
+          cd encrypt_app
           ./system_tests.sh
           
-#           export BINARY=${{ matrix.binary_version }}
-#           export PLATFORM=${{ matrix.platform }}
-#           docker-compose --file ./tests/docker-compose.test.yml build
-#           docker-compose --file ./tests/docker-compose.test.yml run sut
+
