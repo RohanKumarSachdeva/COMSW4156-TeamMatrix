@@ -22,4 +22,4 @@ jobs:
       - name: Run cd
         run: cd encrypt_app/tests
       - name: Run Test
-        run: python -m unittest test_db
+        run: python -m unittest test_db.py
