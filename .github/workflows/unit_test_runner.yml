@@ -1,21 +1,23 @@
-name: Test
 
+name: Continuous Integration
 on:
   push:
     # run on push against master
     branches: [master]
-
 jobs:
-  tests:
-    
+  test:
     runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8]
     steps:
-      # checksout the repo to vm
       - uses: actions/checkout@v2
-      - name: Build and run test
-        run:
-          cd encrypt_app
-          ./system_tests.sh
-          
-
+      - name: Set up Python all python version
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - name: Install dependencies
+        run: pip install -r requirements.txt 
+      - name: Run Test
+        run: python -m unittest test_db
