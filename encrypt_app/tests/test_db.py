@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
 import db
 
 # Commit for testing
-# Commiting to test github
+# Commiting to test github actions
 class Test_Testdb(unittest.TestCase):
 
     def setUp(self):
