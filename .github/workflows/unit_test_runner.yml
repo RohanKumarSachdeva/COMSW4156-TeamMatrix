@@ -1,0 +1,24 @@
+name: Docker CD Test and Publish
+
+on:
+  push:
+    # run on push against master
+    branches: [master]
+
+jobs:
+  tests:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      # checksout the repo to vm
+      - uses: actions/checkout@v2
+      - name: Build and run test
+        run:
+          cd ecrypt_app/
+          ./system_tests.sh
+          
+#           export BINARY=${{ matrix.binary_version }}
+#           export PLATFORM=${{ matrix.platform }}
+#           docker-compose --file ./tests/docker-compose.test.yml build
+#           docker-compose --file ./tests/docker-compose.test.yml run sut
