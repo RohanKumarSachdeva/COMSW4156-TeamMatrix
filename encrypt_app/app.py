@@ -195,6 +195,15 @@ def generate():
     return {'message': password_gen()}
 
 
+@app.route('/welcome')
+@login_is_required
+def protected_area():
+
+    return f"Welcome {session['name']} you are logged in with email {session['email']}. " \
+           f"You can now Create, Retrieve, Update and Delete passwords" \
+           f" <a href='/logout'><button>Logout</button></a>"
+
+
 @app.route('/logout')
 def logout():
     session.clear()
