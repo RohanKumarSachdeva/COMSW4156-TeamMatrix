@@ -21,3 +21,9 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run Test
         run: python -m unittest encrypt_app/tests/test_db.py encrypt_app/tests/test_cipher.py encrypt_app/tests/test_password_gen.py
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Unit Test Results (Python ${{ matrix.python-version }})
+          path: pytest.xml
