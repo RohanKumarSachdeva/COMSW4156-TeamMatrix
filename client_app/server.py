@@ -14,19 +14,93 @@ Go to http://localhost:8111 in your browser.
 import os
 import requests
 import json
-from flask import Flask, request, render_template, g, redirect, Response, flash
+from flask import Flask, request, render_template, g, redirect, Response, flash, session
 
+from pip._vendor import cachecontrol
+
+import google
+from google.oauth2 import id_token
+from google_auth_oauthlib.flow import Flow
+
+from datetime import timedelta
+import pathlib
+
+MATRIX_PASSWORD_MANAGEMENT_API = 'http://0.0.0.0:5001'
+OAUTH_TIMEOUT = 10
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.secret_key = 'matrix-client'
 
-MATRIX_PASSWORD_MANAGEMENT_API = 'http://0.0.0.0:5001'
+file = open("keys.txt", "r")
+keys = file.read().splitlines()
+file.close()
+
+app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=OAUTH_TIMEOUT)
+GOOGLE_CLIENT_ID = keys[1]
+client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+flow = Flow.from_client_secrets_file(
+    client_secrets_file=client_secrets_file,
+    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
+            "openid"],
+    redirect_uri="http://127.0.0.1:5000/authorize"
+)
+
+
+def login_is_required(function):
+    def wrapper(*args, **kwargs):
+        if "google_id" not in session:
+            # return abort(401)  # Authorization required
+            return redirect('/')
+        else:
+            return function()
+    wrapper.__name__ = function.__name__
+    return wrapper
+
+
 @app.route('/')
 def index():
-    return render_template("generator.html")
+    if "google_id" in session:
+        return redirect('/generate')
+    return "<H1>Welcome to Password Manager, hit login to continue! </H1> <br>" \
+           "<a href='/login'><button>Login</button></a>"
+
+
+@app.route('/login')
+def login():
+    authorization_url, state = flow.authorization_url()
+    session["state"] = state
+    return redirect(authorization_url)
+
+
+@app.route('/authorize')
+def authorize():
+    flow.fetch_token(authorization_response=request.url)
+    if not session["state"] == request.args["state"]:
+        abort(500)  # State does not match!
+
+    credentials = flow.credentials
+    request_session = requests.session()
+    cached_session = cachecontrol.CacheControl(request_session)
+    token_request = google.auth.transport.requests.Request(session=cached_session)
+
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials._id_token,
+        request=token_request,
+        audience=GOOGLE_CLIENT_ID
+    )
+
+    session["google_id"] = id_info.get("sub")
+    session["name"] = id_info.get("name")
+    session['email'] = id_info.get("email")
+
+    return redirect("/generate")
 
 
 @app.route('/generate', methods=['GET', 'POST'])
+@login_is_required
 def password_gen():
     if request.method == 'POST':
         caps_bool = request.form.get('caps', '')
@@ -44,10 +118,11 @@ def password_gen():
         generated_password = json.loads(response.text)['data']
         flash(f"Generated Password: {generated_password}")
 
-    return render_template("generator.html")
+    return render_template("generator.html", user=session['name'])
 
 
 @app.route('/create', methods=['GET', 'POST'])
+@login_is_required
 def create_password():
     if request.method == 'POST':
         payload = dict()
@@ -58,7 +133,7 @@ def create_password():
             result = json.loads(response.text)['data']
             flash(f"Password {result['password']} is of {result['label']} strength."
                   f" It will take {result['estimated_guesses']} guesses to crack it.")
-            return render_template("create.html")
+            return render_template("create.html", user=session['name'])
 
         payload['application'] = request.form['application']
         response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API + '/create',
@@ -67,10 +142,11 @@ def create_password():
         if message:
             flash(message)
 
-    return render_template("create.html")
+    return render_template("create.html", user=session['name'])
 
 
 @app.route('/retrieve', methods=['GET', 'POST'])
+@login_is_required
 def retrieve_password():
     app_list = []
     if request.method == 'POST':
@@ -103,10 +179,12 @@ def retrieve_password():
     if len(app_list) == 0:
         app_list.append(-1)
 
-    return render_template("retrieve.html", data=data, app_list=app_list)
+    return render_template("retrieve.html", data=data,
+                           app_list=app_list, user=session['name'])
 
 
 @app.route('/delete', methods=['GET', 'POST'])
+@login_is_required
 def delete_password():
 
     if request.method == 'POST':
@@ -124,10 +202,11 @@ def delete_password():
     results = json.loads(response.text)['data']
     data = [key for key in results]
 
-    return render_template("delete.html", data=data)
+    return render_template("delete.html", data=data, user=session['name'])
 
 
 @app.route('/update', methods=['GET', 'POST'])
+@login_is_required
 def update_password():
 
     if request.method == 'POST':
@@ -145,7 +224,13 @@ def update_password():
     results = json.loads(response.text)['data']
     data = [key for key in results]
 
-    return render_template("update.html", data=data)
+    return render_template("update.html", data=data, user=session['name'])
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect("/")
 
 
 if __name__ == "__main__":
@@ -155,8 +240,8 @@ if __name__ == "__main__":
     @click.command()
     @click.option('--debug', is_flag=True)
     @click.option('--threaded', is_flag=True)
-    @click.argument('HOST', default='0.0.0.0')
-    @click.argument('PORT', default=8112, type=int)
+    @click.argument('HOST', default='127.0.0.1')
+    @click.argument('PORT', default=5000, type=int)
     def run(debug, threaded, host, port):
         """
     This function handles command line parameters.
