@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix Password Generator</title>
+    <style>
+        h1   {color: #46e405;
+            margin: auto;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          width: 550px;
+          height: 100px;}
+        h3   {color: black;}
+        .center
+        {
+          margin: auto;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          width: 400px;
+        }
+        label {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1> Random Password Generator</h1>
+
+    <div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    </div>
+
+    <div class="center">
+        <form method="POST" action="/generate">
+            <h3>You can now Create, Retrieve, Update and Delete passwords</h3>
+
+            <input type="submit" value="Generate">
+            <!-- <button onclick="location.href='http://127.0.0.1:5000/generate'">Generate</button> -->
+            <label>Characters used: </label>
+            <input type="checkbox" name="caps" id="uppercase" checked>
+            <label for="uppercase">ABC</label>
+            <input type="checkbox" name="num" id="numbers" checked>
+            <label for="numbers">123</label>
+            <input type="checkbox" name="spchar" id="special_char" checked>
+            <label for="special_char">!@#</label>
+        </form>
+    </div>
+
+    <p><button onclick="location.href='http://127.0.0.1:5000/create'">Create</button></p>
+    <p><button onclick="location.href='http://127.0.0.1:5000/retrieve'">Retrieve</button></p>
+    <p><button onclick="location.href='http://127.0.0.1:5000/update'">Update</button></p>
+    <p><button onclick="location.href='http://127.0.0.1:5000/delete'">Delete</button></p>
+
+
+</body>
+
+
+</html>
