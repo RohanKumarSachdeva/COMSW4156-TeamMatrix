@@ -26,25 +26,24 @@ def index():
     return render_template("generator.html")
 
 
-@app.route('/generate', methods=['POST'])
+@app.route('/generate', methods=['GET', 'POST'])
 def password_gen():
-    caps_bool = request.form.get('caps', '')
-    spchar_bool = request.form.get('spchar', '')
-    num_bool = request.form.get('num', '')
+    if request.method == 'POST':
+        caps_bool = request.form.get('caps', '')
+        spchar_bool = request.form.get('spchar', '')
+        num_bool = request.form.get('num', '')
 
-    query_params = dict()
-    if num_bool:
-        query_params['num'] = 'true'
-    if spchar_bool:
-        query_params['char'] = 'true'
-    if caps_bool:
-        query_params['caps'] = 'true'
+        query_params = dict()
+        query_params['num'] = 'true' if num_bool else 'false'
+        query_params['spchar'] = 'true' if spchar_bool else 'false'
+        query_params['caps'] = 'true' if caps_bool else 'false'
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API+'/generate',
-                            params=query_params)
+        response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API+'/generate',
+                                params=query_params)
 
-    generated_password = json.loads(response.text)['data']
-    flash(f"Generated Password: {generated_password}")
+        generated_password = json.loads(response.text)['data']
+        flash(f"Generated Password: {generated_password}")
+
     return render_template("generator.html")
 
 
