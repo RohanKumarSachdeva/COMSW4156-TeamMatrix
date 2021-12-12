@@ -49,6 +49,27 @@ def password_gen():
     return render_template("generator.html")
 
 
+@app.route('/delete', methods=['GET', 'POST'])
+def delete_password():
+
+    if request.method == 'POST':
+        payload = dict()
+        payload['application'] = request.form['application']
+        print(payload)
+        response = requests.delete(MATRIX_PASSWORD_MANAGEMENT_API + '/delete',
+                                   params=payload)
+        message = json.loads(response.text)['data']
+        if message:
+            flash(message)
+
+    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                            params={'application': 'all'})
+    results = json.loads(response.text)['data']
+    data = [key for key in results]
+
+    return render_template("delete.html", data=data)
+
+
 @app.route('/update', methods=['GET', 'POST'])
 def update_password():
 
@@ -57,7 +78,7 @@ def update_password():
         payload['password'] = request.form['password']
         payload['application'] = request.form['application']
         response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API + '/update',
-                                params=payload)
+                                 params=payload)
         message = json.loads(response.text)['data']
         if message:
             flash(message)
