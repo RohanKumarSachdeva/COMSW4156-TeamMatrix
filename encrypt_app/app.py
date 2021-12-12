@@ -78,7 +78,7 @@ def create():
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
-    user_id = 'abc@gmail.com'
+    user_id = request.json['user_email']
     result = db.get_record(user_id, app_name)
     if not result:
         cipher = Cipher()
@@ -105,7 +105,8 @@ def retrieve():
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
-    user_id = 'abc@gmail.com'
+    user_id = request.json['user_email']
+
     result = db.get_record(user_id, app_name)
     passwords = {}
     for row in result:
@@ -148,7 +149,7 @@ def update():
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
-    user_id = 'abc@gmail.com'
+    user_id = request.json['user_email']
     result = db.get_record(user_id, app_name)
 
     if result:
@@ -169,7 +170,6 @@ def update():
 
 @app.route('/delete', methods=['DELETE'])
 def delete():
-    user_id = 'abc@gmail.com'
     app_name = request.args.get('application')
     if not app_name:
         message = 'Invalid application name.'
@@ -177,6 +177,7 @@ def delete():
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
+    user_id = request.json['user_email']
     result = db.get_record(user_id, app_name)
     if not result:
         message = f'Application {app_name} does not exist in the database.'
