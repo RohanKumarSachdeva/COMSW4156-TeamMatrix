@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Password Creation Form</title>
+</head>
+
+<body>
+<h1>Password Creation Page</h1>
+
+<div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<form method="POST" action="/create">
+
+    <p>Application: <input type="text" name="application"></p>
+    <p>Password: <input type="text" name="password"></p>
+
+    <input type="submit" name="create_pass" value="Create Password">
+    <input type="submit" name="pass_strength" value="Check Strength">
+</form>
+<br><br>
+<button onclick="location.href='/'">Back</button>
+</body>
+</html>

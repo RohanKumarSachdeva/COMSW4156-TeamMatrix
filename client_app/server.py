@@ -23,7 +23,6 @@ app.secret_key = 'matrix-client'
 MATRIX_PASSWORD_MANAGEMENT_API = 'http://0.0.0.0:5001'
 @app.route('/')
 def index():
-    print(request.args)
     return render_template("generator.html")
 
 
@@ -47,6 +46,29 @@ def password_gen():
     generated_password = json.loads(response.text)['data']
     flash(f"Generated Password: {generated_password}")
     return render_template("generator.html")
+
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_password():
+    if request.method == 'POST':
+        payload = dict()
+        payload['password'] = request.form['password']
+        if 'pass_strength' in request.form:
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/strength',
+                                     params=payload)
+            result = json.loads(response.text)['data']
+            flash(f"Password {result['password']} is of {result['label']} strength."
+                  f" It will take {result['estimated_guesses']} guesses to crack it.")
+            return render_template("create.html")
+
+        payload['application'] = request.form['application']
+        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API + '/create',
+                                   params=payload)
+        message = json.loads(response.text)['data']
+        if message:
+            flash(message)
+
+    return render_template("create.html")
 
 
 @app.route('/retrieve', methods=['GET', 'POST'])
