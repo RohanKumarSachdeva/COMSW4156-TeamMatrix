@@ -23,30 +23,108 @@ app.secret_key = 'matrix-client'
 MATRIX_PASSWORD_MANAGEMENT_API = 'http://0.0.0.0:5001'
 @app.route('/')
 def index():
-    print(request.args)
     return render_template("generator.html")
 
 
-@app.route('/generate', methods=['POST'])
+@app.route('/generate', methods=['GET', 'POST'])
 def password_gen():
-    caps_bool = request.form.get('caps', '')
-    spchar_bool = request.form.get('spchar', '')
-    num_bool = request.form.get('num', '')
+    if request.method == 'POST':
+        caps_bool = request.form.get('caps', '')
+        spchar_bool = request.form.get('spchar', '')
+        num_bool = request.form.get('num', '')
 
-    query_params = dict()
-    if num_bool:
-        query_params['num'] = 'true'
-    if spchar_bool:
-        query_params['char'] = 'true'
-    if caps_bool:
-        query_params['caps'] = 'true'
+        query_params = dict()
+        query_params['num'] = 'true' if num_bool else 'false'
+        query_params['spchar'] = 'true' if spchar_bool else 'false'
+        query_params['caps'] = 'true' if caps_bool else 'false'
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API+'/generate',
-                            params=query_params)
+        response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API+'/generate',
+                                params=query_params)
 
-    generated_password = json.loads(response.text)['data']
-    flash(f"Generated Password: {generated_password}")
+        generated_password = json.loads(response.text)['data']
+        flash(f"Generated Password: {generated_password}")
+
     return render_template("generator.html")
+
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_password():
+    if request.method == 'POST':
+        payload = dict()
+        payload['password'] = request.form['password']
+        if 'pass_strength' in request.form:
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/strength',
+                                     params=payload)
+            result = json.loads(response.text)['data']
+            flash(f"Password {result['password']} is of {result['label']} strength."
+                  f" It will take {result['estimated_guesses']} guesses to crack it.")
+            return render_template("create.html")
+
+        payload['application'] = request.form['application']
+        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API + '/create',
+                                   params=payload)
+        message = json.loads(response.text)['data']
+        if message:
+            flash(message)
+
+    return render_template("create.html")
+
+
+@app.route('/retrieve', methods=['GET', 'POST'])
+def retrieve_password():
+    app_list = []
+    if request.method == 'POST':
+        payload = dict()
+        if 'ret_pass_all' in request.form:
+            payload['application'] = 'all'
+
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                                    params=payload)
+            results = json.loads(response.text)['data']
+
+            for app, passwd in results.items():
+                app_list.append((app, passwd))
+        else:
+            payload['application'] = request.form['application']
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                                    params=payload)
+
+            result = json.loads(response.text)['data']
+            for key in result:
+                message = f"Password for application {key}: {result[key]}"
+                flash(message)
+
+    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                            params={'application': 'all'})
+
+    results = json.loads(response.text)['data']
+    data = [key for key in results]
+
+    if len(app_list) == 0:
+        app_list.append(-1)
+
+    return render_template("retrieve.html", data=data, app_list=app_list)
+
+
+@app.route('/delete', methods=['GET', 'POST'])
+def delete_password():
+
+    if request.method == 'POST':
+        payload = dict()
+        payload['application'] = request.form['application']
+
+        response = requests.delete(MATRIX_PASSWORD_MANAGEMENT_API + '/delete',
+                                   params=payload)
+        message = json.loads(response.text)['data']
+        if message:
+            flash(message)
+
+    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                            params={'application': 'all'})
+    results = json.loads(response.text)['data']
+    data = [key for key in results]
+
+    return render_template("delete.html", data=data)
 
 
 @app.route('/update', methods=['GET', 'POST'])
@@ -57,7 +135,7 @@ def update_password():
         payload['password'] = request.form['password']
         payload['application'] = request.form['application']
         response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API + '/update',
-                                params=payload)
+                                 params=payload)
         message = json.loads(response.text)['data']
         if message:
             flash(message)

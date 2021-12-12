@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Password Delete Form</title>
+</head>
+
+<body>
+<h1>Password Delete Page</h1>
+
+<div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<form method="POST" action="/delete">
+
+    <p>Application:
+        <select name="application">
+            {% for n in data %}
+                <option>{{n}}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <input type="submit" value="Delete Password">
+</form>
+<br><br>
+<button onclick="location.href='/'">Back</button>
+</body>
+</html>
