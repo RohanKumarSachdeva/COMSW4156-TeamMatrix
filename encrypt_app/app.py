@@ -38,7 +38,7 @@ def clear_app():
 
 @app.route('/')
 def hello_world():
-    return '<u>Welcome to Crypt Microservice!</u>'
+    return '<u>Welcome to Matrix Microservice!</u>'
 
 
 @app.route('/create', methods=['POST'])
@@ -46,9 +46,14 @@ def create():
     app_name = request.args.get('application')
     password = request.args.get('password')
 
-    if app_name == 'all':
+    if not app_name or app_name == 'all':
         return {
             'message': 'Invalid application name.'
+        }
+
+    if not password or len(password) < 8:
+        return {
+            'message': 'Password length too short.'
         }
 
     user_id = 'abc@gmail.com'
@@ -71,6 +76,11 @@ def create():
 @app.route('/retrieve', methods=['GET'])
 def retrieve():
     app_name = request.args.get('application')
+    if not app_name:
+        return {
+            'message': 'Invalid application name.'
+        }
+
     user_id = 'abc@gmail.com'
     result = db.get_record(user_id, app_name)
     passwords = {}
@@ -87,9 +97,14 @@ def retrieve():
 def update():
     app_name = request.args.get('application')
     password = request.args.get('password')
-    if app_name == 'all':
+
+    if not app_name or app_name == 'all':
         return {
             'message': 'Invalid application name.'
+        }
+    if not password or len(password) < 8:
+        return {
+            'message': 'Password length too short.'
         }
 
     user_id = 'abc@gmail.com'
@@ -112,8 +127,17 @@ def update():
 
 @app.route('/delete', methods=['DELETE'])
 def delete():
-    app_name = request.args.get('application')
     user_id = 'abc@gmail.com'
+    app_name = request.args.get('application')
+    if not app_name:
+        return {
+            'message': 'Invalid application name.'
+        }
+    result = db.get_record(user_id, app_name)
+    if len(result) == 0:
+        return {
+            'message': f'Application {app_name} does not exist in the database.'
+        }
     db.delete_record(user_id, app_name)
     return {
         'message': f'Deleted passwords for {app_name} application(s).'
@@ -122,7 +146,33 @@ def delete():
 
 @app.route('/generate', methods=['GET'])
 def generate():
-    return {'message': password_gen()}
+    num = request.args.get('num', 'true')
+    length = request.args.get('len', '12')
+    spchar = request.args.get('spchar', 'true')
+    caps = request.args.get('caps', 'true')
+
+    if not length.isdigit():
+        return {
+                'message': 'num query param is invalid'
+            }
+
+    length = int(length)
+    if int(length) < 8:
+        return {
+            'message': 'password length should be atleast 8'
+        }
+    for query_param in [num, spchar, caps]:
+        if query_param.lower() not in ['true', 'false']:
+            return {
+                'message': '/generate endpoint only accepts true '
+                           'or false values for query string params.'
+            }
+
+    num = True if num.lower() == 'true' else False
+    spchar = True if spchar.lower() == 'true' else False
+    caps = True if caps.lower() == 'true' else False
+    print("Input received:", num, spchar, caps)
+    return {'message': password_gen(length, num, spchar, caps)}
 
 
 if __name__ == '__main__':
