@@ -3,6 +3,8 @@ from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 import logging
 import db
+import json
+from urllib import parse
 
 from EncryptionServices.password_gen import password_gen
 from EncryptionServices.strength_checker import strength_checker
@@ -50,22 +52,29 @@ def hello_world():
 def create():
     app_name = request.args.get('application')
     password = request.args.get('password')
+    password = parse.unquote(password)
 
     if not app_name or app_name == 'all':
         message = 'Invalid application name.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
     if not password or len(password) < 8:
-        message = 'Password length too short.'
-        return Response({'data': message},
+        message = 'Password length should be atleast 8.'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
     if len(password) > 15:
         message = 'Password length should not be more than 15.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
+                        status=BAD_REQUEST_STATUS_CODE,
+                        mimetype='application/json')
+
+    if '"' in password or "\\" in password:
+        message = 'Password must not contain \\ or "'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
@@ -77,12 +86,12 @@ def create():
         db.add_record((user_id, app_name, encrypt_pw, encryption_key))
 
         message = 'Password created successfully!'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=SUCCESS_STATUS_CODE,
                         mimetype='application/json')
     else:
         message = 'A password for this application exists already. Please use /update endpoint.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
@@ -92,7 +101,7 @@ def retrieve():
     app_name = request.args.get('application')
     if not app_name:
         message = 'Invalid application name.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
@@ -103,8 +112,8 @@ def retrieve():
         cipher = Cipher(key=row[2])
         plain_password = cipher.decipher(row[1])
         passwords[row[0]] = plain_password
-    message: passwords
-    return Response({'data': message},
+    message = passwords
+    return Response(json.dumps({'data': message}),
                     status=SUCCESS_STATUS_CODE,
                     mimetype='application/json')
 
@@ -113,22 +122,29 @@ def retrieve():
 def update():
     app_name = request.args.get('application')
     password = request.args.get('password')
+    password = parse.unquote(password)
 
     if not app_name or app_name == 'all':
         message = 'Invalid application name.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
     if not password or len(password) < 8:
-        message = 'Password length too short.'
-        return Response({'data': message},
+        message = 'Password length should be atleast 8.'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
     if len(password) > 15:
         message = 'Password length should not be more than 15.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
+                        status=BAD_REQUEST_STATUS_CODE,
+                        mimetype='application/json')
+
+    if '"' in password or "\\" in password:
+        message = 'Password must not contain \\ or "'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
@@ -141,12 +157,12 @@ def update():
         db.update_record((user_id, app_name, encrypt_pw, encryption_key))
 
         message = 'Password updated successfully!'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=SUCCESS_STATUS_CODE,
                         mimetype='application/json')
     else:
         message = 'No such application exists. Please use /create endpoint.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=NOT_FOUND_STATUS_CODE,
                         mimetype='application/json')
 
@@ -157,20 +173,20 @@ def delete():
     app_name = request.args.get('application')
     if not app_name:
         message = 'Invalid application name.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
     result = db.get_record(user_id, app_name)
     if not result:
         message = f'Application {app_name} does not exist in the database.'
-        return Response({'data': message},
+        return Response(json.dumps({'data': message}),
                         status=NOT_FOUND_STATUS_CODE,
                         mimetype='application/json')
 
     db.delete_record(user_id, app_name)
     message = f'Deleted passwords for {app_name} application(s).'
-    return Response({'data': message},
+    return Response(json.dumps({'data': message}),
                     status=SUCCESS_STATUS_CODE,
                     mimetype='application/json')
 
@@ -183,21 +199,21 @@ def generate():
     caps = request.args.get('caps', 'true')
 
     if not length.isdigit():
-        message = 'num query param is invalid'
-        return Response({'data': message},
+        message = 'num query param is invalid.'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
     length = int(length)
     if length < 8:
-        message = 'Password length should be atleast 8'
-        return Response({'data': message},
+        message = 'Password length should be atleast 8.'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
     if length > 15:
-        message = 'Password length should not be more than 15'
-        return Response({'data': message},
+        message = 'Password length should not be more than 15.'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
@@ -205,7 +221,7 @@ def generate():
         if query_param.lower() not in ['true', 'false']:
             message = '/generate endpoint only accepts true' \
                       ' or false values for query string params.'
-            return Response({'data': message},
+            return Response(json.dumps({'data': message}),
                             status=BAD_REQUEST_STATUS_CODE,
                             mimetype='application/json')
 
@@ -213,24 +229,28 @@ def generate():
     spchar = True if spchar.lower() == 'true' else False
     caps = True if caps.lower() == 'true' else False
 
-    return Response({'data': password_gen(length, num, spchar, caps)},
+    passcode = password_gen(length, num, spchar, caps)
+    print(passcode)
+    return Response(json.dumps({'data': passcode}),
                     status=SUCCESS_STATUS_CODE,
                     mimetype='application/json')
 
 
-@app.route('/generate', methods=['GET'])
+@app.route('/strength', methods=['GET'])
 def strength():
     password = request.args.get('password')
+    password = parse.unquote(password)
 
     if not password:
-        return Response({'data': 'Password cannot be null.'},
+        message = 'Password cannot be empty.'
+        return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
 
-    response = Response({'data': strength_checker(password)},
-                        status=SUCCESS_STATUS_CODE,
-                        mimetype='application/json')
-    return response
+    message = strength_checker(password)
+    return Response(json.dumps({'data': message}),
+                    status=SUCCESS_STATUS_CODE,
+                    mimetype='application/json')
 
 
 if __name__ == '__main__':
