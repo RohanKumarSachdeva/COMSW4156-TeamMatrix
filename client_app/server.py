@@ -49,13 +49,49 @@ def password_gen():
     return render_template("generator.html")
 
 
+@app.route('/retrieve', methods=['GET', 'POST'])
+def retrieve_password():
+    app_list = []
+    if request.method == 'POST':
+        payload = dict()
+        if 'ret_pass_all' in request.form:
+            payload['application'] = 'all'
+
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                                    params=payload)
+            results = json.loads(response.text)['data']
+
+            for app, passwd in results.items():
+                app_list.append((app, passwd))
+        else:
+            payload['application'] = request.form['application']
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                                    params=payload)
+
+            result = json.loads(response.text)['data']
+            for key in result:
+                message = f"Password for application {key}: {result[key]}"
+                flash(message)
+
+    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+                            params={'application': 'all'})
+
+    results = json.loads(response.text)['data']
+    data = [key for key in results]
+
+    if len(app_list) == 0:
+        app_list.append(-1)
+
+    return render_template("retrieve.html", data=data, app_list=app_list)
+
+
 @app.route('/delete', methods=['GET', 'POST'])
 def delete_password():
 
     if request.method == 'POST':
         payload = dict()
         payload['application'] = request.form['application']
-        print(payload)
+
         response = requests.delete(MATRIX_PASSWORD_MANAGEMENT_API + '/delete',
                                    params=payload)
         message = json.loads(response.text)['data']

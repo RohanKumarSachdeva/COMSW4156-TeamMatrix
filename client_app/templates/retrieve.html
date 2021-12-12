@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+    .div-table {
+      display: table;
+      width: auto;
+      background-color: #eee;
+      border: 1px solid #666666;
+      border-spacing: 5px; /* cellspacing:poor IE support for  this */
+    }
+    .div-table-row {
+      display: table-row;
+      width: auto;
+      clear: both;
+    }
+    .div-table-col {
+      float: left; /* fix for  buggy browsers */
+      display: table-cell;
+      width: 200px;
+      background-color: #ccc;
+    }
+
+  </style>
+
+<head>
+    <meta charset="UTF-8">
+    <title>View Password</title>
+</head>
+
+<body>
+<h1>View Password</h1>
+
+<div>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</div>
+
+<form method="POST" action="/retrieve">
+
+    <p>Application:
+        <select name="application">
+            {% for n in data %}
+                <option>{{n}}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <input type="submit" name="ret_pass" value="Retrieve Password">
+    <input type="submit" name="ret_pass_all" value="Retrieve All Passwords">
+</form>
+
+<div>
+        {% if app_list is defined and app_list[0] != -1 %}
+            <div class="div-table">
+                <div class="div-table-row">
+                    <div class="div-table-col">Application</div>
+                    <div  class="div-table-col">Password</div>
+                </div>
+
+                {% for n in app_list %}
+                    <div class="div-table-row">
+                        <div class="div-table-col">{{n[0]}}</div>
+                        <div class="div-table-col">{{n[1]}}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% elif job is defined %}
+            <div>No passwords present</div>
+        {% endif %}
+    </div>
+<br><br>
+<button onclick="location.href='/'">Back</button>
+</body>
+</html>
