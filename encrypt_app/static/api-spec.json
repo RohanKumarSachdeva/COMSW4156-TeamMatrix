@@ -85,7 +85,7 @@
           {
             "description": "Boolean to include numbers",
             "in": "query",
-            "name": "nums",
+            "name": "num",
             "required": false,
             "type": "boolean"
           },
@@ -142,6 +142,31 @@
         ]
       }
     },
+    "/strength": {
+      "get": {
+        "description": "/strength endpoint:\n\nThis API is intended to verify the strength of password taken as input from the user. The user passes a password and this endpoint provides the strength of password in terms of 0-4 score, strength label and a guessed time for cracking the given password.\n\nUsage: curl -X GET \"0.0.0.0:5001/strength?password=pa$$c0de\"",
+        "parameters": [
+          {
+            "description": "Plaintext Password",
+            "in": "query",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ServiceResponse"
+            }
+          }
+        },
+        "tags": [
+          "password manager"
+        ]
+      }
+    },
     "/update": {
       "post": {
         "description": "/update endpoint:\n\nThis API is intended to be used for updation of a password for an application. The user passes an application name and a new password to this endpoint which is then saved in encrypted format.\n\nUsage: curl -X POST \"0.0.0.0:5001/update?application=app1&password=new_qwerty@098\"",
@@ -175,5 +200,6 @@
       }
     }
   },
+
   "swagger": "2.0.0"
 }
