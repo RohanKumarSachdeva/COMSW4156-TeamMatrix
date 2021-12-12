@@ -16,6 +16,11 @@
 <body>
 <h1>Password Update Page</h1>
 
+<p style="text-align:right">
+        Hi, {{user}}
+        <a href='/logout'><button>Logout</button></a>
+</p>
+
 <div>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
