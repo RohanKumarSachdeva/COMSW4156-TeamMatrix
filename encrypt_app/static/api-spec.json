@@ -1,8 +1,8 @@
 {
   "definitions": {
-    "EncryptResponse": {
+    "ServiceResponse": {
       "properties": {
-        "message": {
+        "data": {
           "type": "string"
         }
       },
@@ -37,7 +37,7 @@
           "default": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/EncryptResponse"
+              "$ref": "#/definitions/ServiceResponse"
             }
           }
         },
@@ -62,7 +62,7 @@
           "default": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/EncryptResponse"
+              "$ref": "#/definitions/ServiceResponse"
             }
           }
         },
@@ -74,12 +74,41 @@
     "/generate": {
       "get": {
         "description": "/generate endpoint:\n\nThis API is intended to be used for generation of a strong password for an application. The user invokes the endpoint and receives a secure password.\n\nUsage: curl -X GET \"0.0.0.0:5001/generate\"",
-        "parameters": [],
+        "parameters": [
+          {
+            "description": "Password Length",
+            "in": "query",
+            "name": "len",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "description": "Boolean to include numbers",
+            "in": "query",
+            "name": "num",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "description": "Boolean to include special characters",
+            "in": "query",
+            "name": "spchar",
+            "required": false,
+            "type": "boolean"
+          },
+          {
+            "description": "Boolean to include uppercase letter",
+            "in": "query",
+            "name": "caps",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
         "responses": {
           "default": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/EncryptResponse"
+              "$ref": "#/definitions/ServiceResponse"
             }
           }
         },
@@ -104,7 +133,32 @@
           "default": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/EncryptResponse"
+              "$ref": "#/definitions/ServiceResponse"
+            }
+          }
+        },
+        "tags": [
+          "password manager"
+        ]
+      }
+    },
+    "/strength": {
+      "get": {
+        "description": "/strength endpoint:\n\nThis API is intended to verify the strength of password taken as input from the user. The user passes a password and this endpoint provides the strength of password in terms of 0-4 score, strength label and a guessed time for cracking the given password.\n\nUsage: curl -X GET \"0.0.0.0:5001/strength?password=pa$$c0de\"",
+        "parameters": [
+          {
+            "description": "Plaintext Password",
+            "in": "query",
+            "name": "password",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ServiceResponse"
             }
           }
         },
@@ -136,7 +190,7 @@
           "default": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/EncryptResponse"
+              "$ref": "#/definitions/ServiceResponse"
             }
           }
         },
@@ -146,5 +200,6 @@
       }
     }
   },
+
   "swagger": "2.0.0"
 }
