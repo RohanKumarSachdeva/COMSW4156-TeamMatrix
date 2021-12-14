@@ -5,7 +5,7 @@ import db
 # Commiting to test github actions 7
 
 
-class Test_Testdb(unittest.TestCase):
+class testDB(unittest.TestCase):
 
     def setUp(self):
         """

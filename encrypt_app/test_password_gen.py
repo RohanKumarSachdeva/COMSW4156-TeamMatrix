@@ -4,7 +4,7 @@ import re
 from EncryptionServices.password_gen import password_gen
 
 
-class TestGenerate(unittest.TestCase):
+class testGenerate(unittest.TestCase):
     def test_length(self):
         """
         Check if password generated is correct length
