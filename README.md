@@ -41,7 +41,7 @@
 
 - Delete Endpoint: Enables user to delete password for particular or all applications.
 
- The API Spec can be found [here](https://github.com/RohanKumarSachdeva/COMSW4156-TeamMatrix/blob/main/documentation/api_spec_password_manager.png)
+[API Spec](https://github.com/RohanKumarSachdeva/COMSW4156-TeamMatrix/blob/main/documentation/api_spec_password_manager.png)
  
- SonarCloud Report Dashboard can be found [here](https://sonarcloud.io/summary/overall?id=RohanKumarSachdeva_COMSW4156-TeamMatrix)
+[Sonar Cloud Report Dashboard](https://sonarcloud.io/summary/overall?id=RohanKumarSachdeva_COMSW4156-TeamMatrix)
 
