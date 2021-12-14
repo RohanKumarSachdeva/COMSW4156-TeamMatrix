@@ -146,10 +146,13 @@ def create_password():
                                     params=payload,
                                     json={'user_email': session['email']})
             result = json.loads(response.text)['data']
-            flash(f"Password {result['password']} "
-                  f"is of {result['label']} strength."
-                  f" It will take {result['estimated_guesses']}"
-                  f" guesses to crack it.")
+            if response.status_code != 200:
+                flash(f"{result}")
+            else:
+                flash(f"Password {result['password']} "
+                      f"is of {result['label']} strength."
+                      f" It will take {result['estimated_guesses']}"
+                      f" guesses to crack it.")
             return render_template("create.html", user=session['name'])
 
         payload['application'] = request.form['application']
@@ -170,6 +173,7 @@ def retrieve_password():
     app_list = []
     if request.method == 'POST':
         payload = dict()
+
         if 'ret_pass_all' in request.form:
             payload['application'] = 'all'
 
@@ -182,16 +186,23 @@ def retrieve_password():
             for app, passwd in results.items():
                 app_list.append((app, passwd))
         else:
-            payload['application'] = request.form['application']
-            response = requests.get(MATRIX_SERVICE_API +
-                                    RETRIEVE_API_ENDPOINT,
-                                    params=payload,
-                                    json={'user_email': session['email']})
+            if 'application' not in request.form:
+                flash("No app selected for retrieving password.")
+            else:
+                payload['application'] = request.form['application']
+                response = requests.get(MATRIX_SERVICE_API +
+                                        RETRIEVE_API_ENDPOINT,
+                                        params=payload,
+                                        json={'user_email': session['email']})
 
-            result = json.loads(response.text)['data']
-            for key in result:
-                message = f"Password for application {key}: {result[key]}"
-                flash(message)
+                result = json.loads(response.text)['data']
+                if response.status_code != 200:
+                    flash(f"{result}")
+                else:
+                    for key in result:
+                        message = f"Password for application" \
+                                  f" {key}: {result[key]}"
+                        flash(message)
 
     response = requests.get(MATRIX_SERVICE_API + RETRIEVE_API_ENDPOINT,
                             params={'application': 'all'},
@@ -213,15 +224,18 @@ def delete_password():
 
     if request.method == 'POST':
         payload = dict()
-        payload['application'] = request.form['application']
+        if 'application' not in request.form:
+            flash("No app selected for deleting password.")
+        else:
+            payload['application'] = request.form['application']
 
-        response = requests.delete(MATRIX_SERVICE_API +
-                                   DELETE_API_ENDPOINT,
-                                   params=payload,
-                                   json={'user_email': session['email']})
-        message = json.loads(response.text)['data']
-        if message:
-            flash(message)
+            response = requests.delete(MATRIX_SERVICE_API +
+                                       DELETE_API_ENDPOINT,
+                                       params=payload,
+                                       json={'user_email': session['email']})
+            message = json.loads(response.text)['data']
+            if message:
+                flash(message)
 
     response = requests.get(MATRIX_SERVICE_API +
                             RETRIEVE_API_ENDPOINT,
@@ -239,15 +253,19 @@ def update_password():
 
     if request.method == 'POST':
         payload = dict()
-        payload['password'] = request.form['password']
-        payload['application'] = request.form['application']
-        response = requests.post(MATRIX_SERVICE_API +
-                                 UPDATE_API_ENDPOINT,
-                                 params=payload,
-                                 json={'user_email': session['email']})
-        message = json.loads(response.text)['data']
-        if message:
-            flash(message)
+
+        if 'application' not in request.form:
+            flash("No app selected for updating password.")
+        else:
+            payload['application'] = request.form['application']
+            payload['password'] = request.form['password']
+            response = requests.post(MATRIX_SERVICE_API +
+                                     UPDATE_API_ENDPOINT,
+                                     params=payload,
+                                     json={'user_email': session['email']})
+            message = json.loads(response.text)['data']
+            if message:
+                flash(message)
 
     response = requests.get(MATRIX_SERVICE_API +
                             RETRIEVE_API_ENDPOINT,

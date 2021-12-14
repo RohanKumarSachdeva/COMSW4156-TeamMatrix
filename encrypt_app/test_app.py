@@ -107,7 +107,7 @@ class TestApp(unittest.TestCase):
 
             app_name = ''
             c.get(f'/retrieve?application={app_name}',
-                             json={'user_email': self.user_email})
+                  json={'user_email': self.user_email})
 
     def test_update(self):
         """
