@@ -4,7 +4,7 @@ import re
 from EncryptionServices.password_gen import password_gen
 
 
-class testGenerate(unittest.TestCase):
+class TestGenerate(unittest.TestCase):
     def test_length(self):
         """
         Check if password generated is correct length
@@ -27,8 +27,8 @@ class testGenerate(unittest.TestCase):
         self.assertEqual(resp, True)
 
         # Check if password has Uppercase char
-        resp_Upper = any(char.isupper() for char in password["message"])
-        self.assertEqual(resp_Upper, True)
+        resp_upper = any(char.isupper() for char in password["message"])
+        self.assertEqual(resp_upper, True)
 
 
 if __name__ == '__main__':

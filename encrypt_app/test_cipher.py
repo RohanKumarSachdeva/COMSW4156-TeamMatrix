@@ -3,7 +3,7 @@ import unittest
 from EncryptionServices.cipher import Cipher
 
 
-class testCipher(unittest.TestCase):
+class TestCipher(unittest.TestCase):
     def setUp(self):
         self.crypt = Cipher()
 

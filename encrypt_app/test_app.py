@@ -5,7 +5,7 @@ import os
 from app import get_app, clear_app
 
 
-class testApp(unittest.TestCase):
+class TestApp(unittest.TestCase):
 
     def setUp(self):
         os.environ['DB_NAME'] = 'test_sqlite_db'
