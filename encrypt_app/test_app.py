@@ -106,7 +106,7 @@ class TestApp(unittest.TestCase):
             self.assertEqual(response.status_code, 400)
 
             app_name = ''
-            response = c.get(f'/retrieve?application={app_name}',
+            c.get(f'/retrieve?application={app_name}',
                              json={'user_email': self.user_email})
 
     def test_update(self):
