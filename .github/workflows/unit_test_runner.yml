@@ -19,6 +19,9 @@ jobs:
           architecture: x64
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: set pythonpath
+        run: |
+          echo "PYTHONPATH=encrypt_app" >> $GITHUB_ENV
       - name: Run Test
         run: python -m unittest encrypt_app/test_db.py encrypt_app/test_cipher.py encrypt_app/test_password_gen.py encrypt_app/test_app.py
       - name: Publish Unit Test Results
