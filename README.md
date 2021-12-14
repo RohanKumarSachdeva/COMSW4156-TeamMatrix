@@ -12,6 +12,9 @@
 - Create Endpoint: 
     `curl -X POST "0.0.0.0:5001/create?application=app1&password=qwerty@098"`
 
+- Strength Endpoint: 
+    `curl -X POST "0.0.0.0:5001/strength?password=qwerty123"`
+
 - Retrieve Endpoint: 
     ```
     curl -X GET "0.0.0.0:5001/retrieve?application=all"
@@ -24,6 +27,7 @@
 - Delete Endpoint: 
     `curl -X DELETE "0.0.0.0:5001/delete?application=google"`
     
+    
 **To run system-tests:**
 
 `./system_tests.sh`
@@ -33,6 +37,8 @@
  - Generate Endpoint: Enables user to Generate a password for an application.
 
 - Create Endpoint: Enables user to create a password for a spcified application.
+
+- Password Strength Endpoint: Checks the strength of password taken as input from the user, providig output on a scale of 0-4 alog with guessed time of craking password.
 
 - Retrieve Endpoint: Enables user to retrieve password for all or specific applications.
   
