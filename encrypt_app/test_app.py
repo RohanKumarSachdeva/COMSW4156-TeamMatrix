@@ -39,10 +39,10 @@ class TestApp(unittest.TestCase):
         :return:
         """
         app_name = 'testapp'
-        password = 'qwerty123'
+        passcode = 'qwerty123'
         with self.app.test_client() as c:
             response = c.post(f'/create?application={app_name}'
-                              f'&password={password}',
+                              f'&password={passcode}',
                               json={'user_email': self.user_email})
             self.assertEqual(response.status_code, 200)
 
@@ -50,7 +50,7 @@ class TestApp(unittest.TestCase):
                              json={'user_email': self.user_email})
             data = json.loads(response.data.decode())
             retrieved_password = data['data'][app_name]
-            self.assertEqual(retrieved_password, password)
+            self.assertEqual(retrieved_password, passcode)
 
     def test_update(self):
         """
@@ -58,11 +58,11 @@ class TestApp(unittest.TestCase):
         :return:
         """
         app_name = 'testapp'
-        password = 'qwerty123'
-        new_password = 'asdf4321'
+        passcode = 'qwerty123'
+        new_passcode = 'asdf4321'
 
         with self.app.test_client() as c:
-            c.post(f'/create?application={app_name}&password={password}',
+            c.post(f'/create?application={app_name}&password={passcode}',
                    json={'user_email': self.user_email})
 
             response = c.get(f'/retrieve?application={app_name}',
@@ -70,12 +70,12 @@ class TestApp(unittest.TestCase):
             data = json.loads(response.data.decode())
             retrieved_password = data['data'][app_name]
 
-            self.assertEqual(retrieved_password, password)
-            self.assertNotEqual(retrieved_password, new_password)
+            self.assertEqual(retrieved_password, passcode)
+            self.assertNotEqual(retrieved_password, new_passcode)
 
             # Now updating the application password
             response = c.post(f'/update?application={app_name}&'
-                              f'password={new_password}',
+                              f'password={new_passcode}',
                               json={'user_email': self.user_email})
             self.assertEqual(response.status_code, 200)
 
@@ -84,8 +84,8 @@ class TestApp(unittest.TestCase):
             data = json.loads(response.data.decode())
             retrieved_password = data['data'][app_name]
 
-            self.assertNotEqual(retrieved_password, password)
-            self.assertEqual(retrieved_password, new_password)
+            self.assertNotEqual(retrieved_password, passcode)
+            self.assertEqual(retrieved_password, new_passcode)
 
     def test_delete(self):
         """
@@ -93,10 +93,10 @@ class TestApp(unittest.TestCase):
         :return:
         """
         app_name = 'testapp'
-        password = 'qwerty123'
+        passcode = 'qwerty123'
 
         with self.app.test_client() as c:
-            c.post(f'/create?application={app_name}&password={password}',
+            c.post(f'/create?application={app_name}&password={passcode}',
                    json={'user_email': self.user_email})
             response = c.delete(f'/delete?application={app_name}',
                                 json={'user_email': self.user_email})
