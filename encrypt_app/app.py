@@ -22,6 +22,11 @@ SUCCESS_STATUS_CODE = 200
 BAD_REQUEST_STATUS_CODE = 400
 NOT_FOUND_STATUS_CODE = 404
 
+api_data_type = 'application/json'
+error_invalid_app_name = 'Invalid application name.'
+error_pass_len_short = 'Password length should be atleast 8.'
+error_pass_len_long = 'Password length should not be more than 15.'
+
 # Swagger config
 SWAGGER_URL = '/swagger'
 API_URL = '/static/api-spec.json'
@@ -57,28 +62,28 @@ def create():
     password = parse.unquote(password)
 
     if not app_name or app_name == 'all':
-        message = 'Invalid application name.'
+        message = error_invalid_app_name
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     if not password or len(password) < 8:
-        message = 'Password length should be atleast 8.'
+        message = error_pass_len_short
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     if len(password) > 15:
-        message = 'Password length should not be more than 15.'
+        message = error_pass_len_long
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     if '"' in password or "\\" in password:
         message = 'Password must not contain \\ or "'
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     user_id = request.json['user_email']
     result = db.get_record(app.db, user_id, app_name)
@@ -90,23 +95,23 @@ def create():
         message = 'Password created successfully!'
         return Response(json.dumps({'data': message}),
                         status=SUCCESS_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
     else:
         message = 'A password for this application exists already.' \
                   'Please use /update endpoint.'
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
 
 @app.route('/retrieve', methods=['GET'])
 def retrieve():
     app_name = request.args.get('application')
     if not app_name:
-        message = 'Invalid application name.'
+        message = error_invalid_app_name
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     user_id = request.json['user_email']
 
@@ -119,7 +124,7 @@ def retrieve():
     message = passwords
     return Response(json.dumps({'data': message}),
                     status=SUCCESS_STATUS_CODE,
-                    mimetype='application/json')
+                    mimetype=api_data_type)
 
 
 @app.route('/update', methods=['POST'])
@@ -129,28 +134,28 @@ def update():
     password = parse.unquote(password)
 
     if not app_name or app_name == 'all':
-        message = 'Invalid application name.'
+        message = error_invalid_app_name
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     if not password or len(password) < 8:
-        message = 'Password length should be atleast 8.'
+        message = error_pass_len_short
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     if len(password) > 15:
-        message = 'Password length should not be more than 15.'
+        message = error_pass_len_long
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     if '"' in password or "\\" in password:
         message = 'Password must not contain \\ or "'
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     user_id = request.json['user_email']
     result = db.get_record(app.db, user_id, app_name)
@@ -165,22 +170,22 @@ def update():
         message = 'Password updated successfully!'
         return Response(json.dumps({'data': message}),
                         status=SUCCESS_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
     else:
         message = 'No such application exists. Please use /create endpoint.'
         return Response(json.dumps({'data': message}),
                         status=NOT_FOUND_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
 
 @app.route('/delete', methods=['DELETE'])
 def delete():
     app_name = request.args.get('application')
     if not app_name:
-        message = 'Invalid application name.'
+        message = error_invalid_app_name
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     user_id = request.json['user_email']
     result = db.get_record(app.db, user_id, app_name)
@@ -188,13 +193,13 @@ def delete():
         message = f'Application {app_name} does not exist in the database.'
         return Response(json.dumps({'data': message}),
                         status=NOT_FOUND_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     db.delete_record(app.db, user_id, app_name)
     message = f'Deleted passwords for {app_name} application(s).'
     return Response(json.dumps({'data': message}),
                     status=SUCCESS_STATUS_CODE,
-                    mimetype='application/json')
+                    mimetype=api_data_type)
 
 
 @app.route('/generate', methods=['GET'])
@@ -208,20 +213,20 @@ def generate():
         message = 'num query param is invalid.'
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     length = int(length)
     if length < 8:
-        message = 'Password length should be atleast 8.'
+        message = error_pass_len_short
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     if length > 15:
-        message = 'Password length should not be more than 15.'
+        message = error_pass_len_long
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     for query_param in [num, spchar, caps]:
         if query_param.lower() not in ['true', 'false']:
@@ -229,7 +234,7 @@ def generate():
                       ' or false values for query string params.'
             return Response(json.dumps({'data': message}),
                             status=BAD_REQUEST_STATUS_CODE,
-                            mimetype='application/json')
+                            mimetype=api_data_type)
 
     num = True if num.lower() == 'true' else False
     spchar = True if spchar.lower() == 'true' else False
@@ -239,7 +244,7 @@ def generate():
     print(passcode)
     return Response(json.dumps({'data': passcode}),
                     status=SUCCESS_STATUS_CODE,
-                    mimetype='application/json')
+                    mimetype=api_data_type)
 
 
 @app.route('/strength', methods=['GET'])
@@ -251,12 +256,12 @@ def strength():
         message = 'Password cannot be empty.'
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
-                        mimetype='application/json')
+                        mimetype=api_data_type)
 
     message = strength_checker(password)
     return Response(json.dumps({'data': message}),
                     status=SUCCESS_STATUS_CODE,
-                    mimetype='application/json')
+                    mimetype=api_data_type)
 
 
 if __name__ == '__main__':
