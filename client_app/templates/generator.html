@@ -4,24 +4,7 @@
     <meta charset="UTF-8">
     <title>Matrix Password Generator</title>
     <style>
-        h1   {color: #46e405;
-            margin: auto;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          width: 550px;
-          height: 100px;}
-        h3   {color: black;}
-        .center
-        {
-          margin: auto;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          width: 400px;
-        }
+
         label {
             cursor: pointer;
         }
@@ -29,7 +12,7 @@
 </head>
 
 <body>
-    <h1> Random Password Generator</h1>
+    <h1> Password Management Service </h1>
 
     <p style="text-align:right">
         Hi, {{user}}
@@ -48,10 +31,10 @@
     {% endwith %}
     </div>
 
-    <div class="center">
+    <div>
         <form method="POST" action="/generate">
             <h3>You can now Create, Retrieve, Update and Delete passwords</h3>
-
+            <h3>Use our app to generate a password!</h3>
             <label>Characters used: </label> <br>
             <input type="checkbox" name="caps" id="uppercase" checked>
             <label for="uppercase">Uppercase Letters (ABC)</label> <br>
@@ -65,7 +48,7 @@
     </div>
 
     <div>
-        <p><a href="create">Create New Password</a></p>
+        <p><a href="create">Save New Password</a></p>
         <p><a href="retrieve">Retrieve Passwords</a></p>
         <p><a href="delete">Delete Passwords</a></p>
         <p><a href="update">Update Password</a></p>

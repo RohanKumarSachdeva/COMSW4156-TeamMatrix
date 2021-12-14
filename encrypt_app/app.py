@@ -92,7 +92,7 @@ def create():
         encrypt_pw, encryption_key = cipher.encipher(password)
         db.add_record(app.db, (user_id, app_name, encrypt_pw, encryption_key))
 
-        message = 'Password created successfully!'
+        message = 'Password saved successfully!'
         return Response(json.dumps({'data': message}),
                         status=SUCCESS_STATUS_CODE,
                         mimetype=api_data_type)
