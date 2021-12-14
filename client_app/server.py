@@ -25,7 +25,7 @@ from google_auth_oauthlib.flow import Flow
 from datetime import timedelta
 import pathlib
 
-MATRIX_PASSWORD_MANAGEMENT_API = 'http://0.0.0.0:5001'
+MATRIX_SERVICE_API = 'http://0.0.0.0:5001'
 
 CREATE_API_ENDPOINT = '/create'
 RETRIEVE_API_ENDPOINT = '/retrieve'
@@ -124,7 +124,7 @@ def password_gen():
         query_params['spchar'] = 'true' if spchar_bool else 'false'
         query_params['caps'] = 'true' if caps_bool else 'false'
 
-        response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + GENERATE_API_ENDPOINT,
+        response = requests.get(MATRIX_SERVICE_API + GENERATE_API_ENDPOINT,
                                 params=query_params,
                                 json={'user_email': session['email']})
 
@@ -141,7 +141,7 @@ def create_password():
         payload = dict()
         payload['password'] = request.form['password']
         if 'pass_strength' in request.form:
-            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+            response = requests.get(MATRIX_SERVICE_API +
                                     STRENGTH_API_ENDPOINT,
                                     params=payload,
                                     json={'user_email': session['email']})
@@ -153,7 +153,7 @@ def create_password():
             return render_template("create.html", user=session['name'])
 
         payload['application'] = request.form['application']
-        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API +
+        response = requests.post(MATRIX_SERVICE_API +
                                  CREATE_API_ENDPOINT,
                                  params=payload,
                                  json={'user_email': session['email']})
@@ -173,7 +173,7 @@ def retrieve_password():
         if 'ret_pass_all' in request.form:
             payload['application'] = 'all'
 
-            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+            response = requests.get(MATRIX_SERVICE_API +
                                     RETRIEVE_API_ENDPOINT,
                                     params=payload,
                                     json={'user_email': session['email']})
@@ -183,7 +183,7 @@ def retrieve_password():
                 app_list.append((app, passwd))
         else:
             payload['application'] = request.form['application']
-            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+            response = requests.get(MATRIX_SERVICE_API +
                                     RETRIEVE_API_ENDPOINT,
                                     params=payload,
                                     json={'user_email': session['email']})
@@ -193,7 +193,7 @@ def retrieve_password():
                 message = f"Password for application {key}: {result[key]}"
                 flash(message)
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + RETRIEVE_API_ENDPOINT,
+    response = requests.get(MATRIX_SERVICE_API + RETRIEVE_API_ENDPOINT,
                             params={'application': 'all'},
                             json={'user_email': session['email']})
 
@@ -215,7 +215,7 @@ def delete_password():
         payload = dict()
         payload['application'] = request.form['application']
 
-        response = requests.delete(MATRIX_PASSWORD_MANAGEMENT_API +
+        response = requests.delete(MATRIX_SERVICE_API +
                                    DELETE_API_ENDPOINT,
                                    params=payload,
                                    json={'user_email': session['email']})
@@ -223,7 +223,7 @@ def delete_password():
         if message:
             flash(message)
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+    response = requests.get(MATRIX_SERVICE_API +
                             RETRIEVE_API_ENDPOINT,
                             params={'application': 'all'},
                             json={'user_email': session['email']})
@@ -241,7 +241,7 @@ def update_password():
         payload = dict()
         payload['password'] = request.form['password']
         payload['application'] = request.form['application']
-        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API +
+        response = requests.post(MATRIX_SERVICE_API +
                                  UPDATE_API_ENDPOINT,
                                  params=payload,
                                  json={'user_email': session['email']})
@@ -249,7 +249,7 @@ def update_password():
         if message:
             flash(message)
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+    response = requests.get(MATRIX_SERVICE_API +
                             RETRIEVE_API_ENDPOINT,
                             params={'application': 'all'},
                             json={'user_email': session['email']})
