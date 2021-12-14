@@ -7,9 +7,6 @@ class TestCipher(unittest.TestCase):
     def setUp(self):
         self.crypt = Cipher()
 
-    def tearDown(self):
-        pass
-
     def test_valid_encryption(self):
         """
         Test for encryption and decryption with valid key
