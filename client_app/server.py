@@ -174,7 +174,9 @@ def retrieve_password():
     if request.method == 'POST':
         payload = dict()
 
-        if 'ret_pass_all' in request.form:
+        if 'application' not in request.form:
+            flash("No app selected for retrieving password.")
+        elif 'ret_pass_all' in request.form:
             payload['application'] = 'all'
 
             response = requests.get(MATRIX_SERVICE_API +
@@ -186,23 +188,20 @@ def retrieve_password():
             for app, passwd in results.items():
                 app_list.append((app, passwd))
         else:
-            if 'application' not in request.form:
-                flash("No app selected for retrieving password.")
-            else:
-                payload['application'] = request.form['application']
-                response = requests.get(MATRIX_SERVICE_API +
-                                        RETRIEVE_API_ENDPOINT,
-                                        params=payload,
-                                        json={'user_email': session['email']})
+            payload['application'] = request.form['application']
+            response = requests.get(MATRIX_SERVICE_API +
+                                    RETRIEVE_API_ENDPOINT,
+                                    params=payload,
+                                    json={'user_email': session['email']})
 
-                result = json.loads(response.text)['data']
-                if response.status_code != 200:
-                    flash(f"{result}")
-                else:
-                    for key in result:
-                        message = f"Password for application" \
-                                  f" {key}: {result[key]}"
-                        flash(message)
+            result = json.loads(response.text)['data']
+            if response.status_code != 200:
+                flash(f"{result}")
+            else:
+                for key in result:
+                    message = f"Password for application" \
+                              f" {key}: {result[key]}"
+                    flash(message)
 
     response = requests.get(MATRIX_SERVICE_API + RETRIEVE_API_ENDPOINT,
                             params={'application': 'all'},
