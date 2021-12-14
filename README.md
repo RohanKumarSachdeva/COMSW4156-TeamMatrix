@@ -49,7 +49,7 @@
 ## Client UI Application
 The client accesses our Password Manageemnt Application on URL [http://127.0.0.1:5000/](http://127.0.0.1:5000/). 
 Since client paths are accessible only when client is authorized, client is first presented with a Welcome page to login with [Google OAuth2.0](https://developers.google.com/assistant/identity/google-sign-in-oauth). 
-Upon login, client gets an option to - 
+Upon login, client gets an option to:
 - Generate a password using our application. Client can specify the inputs to be used (special characters, Uppercase charaters, numbers)
 - Store a new application and password in our database. While providing new inputs, client can also check the strength of their provided password.
 - Retrieve an application and its respective password.
