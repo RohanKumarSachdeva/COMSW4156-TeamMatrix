@@ -6,14 +6,15 @@ Initializes the Table CIPHER - one time
 """
 
 
-def init_db():
+def init_db(dbname):
     """
     creates a table named CIPHER in the database
+    :param dbname: Name of Database
     :return:
     """
     conn = None
     try:
-        conn = sqlite3.connect('sqlite_db')
+        conn = sqlite3.connect(dbname)
         conn.execute('CREATE TABLE IF NOT EXISTS CIPHER'
                      '(user_id TEXT, app_name TEXT,' +
                      'password TEXT, key TEXT)')
@@ -26,15 +27,16 @@ def init_db():
             conn.close()
 
 
-def add_record(record):
+def add_record(dbname, record):
     """
     Adds a new record to the database
+    :param dbname: Name of Database
     :param record: tuple (user_id, app_name, password, key)
     :return:
     """
     conn = None
     try:
-        conn = sqlite3.connect('sqlite_db')
+        conn = sqlite3.connect(dbname)
         insert_q = "INSERT INTO CIPHER (user_id, app_name," \
                    " password, key) VALUES(?, ?, ?, ?)"
         conn.execute(insert_q, record)
@@ -47,18 +49,19 @@ def add_record(record):
             conn.close()
 
 
-def get_record(user_id, app_name):
+def get_record(dbname, user_id, app_name):
     """
     Returns list of tuples of format: app_name, encrypted_password, key
     for the specified user.
     Returns all passwords if app_name is set to all
+    :param dbname: Name of Database
     :param user_id:
     :param app_name: application name or 'all'
     :return:
     """
     conn = None
     try:
-        conn = sqlite3.connect('sqlite_db')
+        conn = sqlite3.connect(dbname)
         select_q = "SELECT app_name, password, key" \
                    " FROM CIPHER WHERE user_id = ?"
         args = (user_id, )
@@ -79,15 +82,16 @@ def get_record(user_id, app_name):
     return list_passwords
 
 
-def update_record(record):
+def update_record(dbname, record):
     """
     Updates the password for the specified application
+    :param dbname: Name of Database
     :param record: tuple (user_id, app_name, password, key)
     :return:
     """
     conn = None
     try:
-        conn = sqlite3.connect('sqlite_db')
+        conn = sqlite3.connect(dbname)
         update_q = "UPDATE CIPHER SET password=?, key=?" \
                    " WHERE user_id=? AND app_name=?"
         args = (record[2], record[3], record[0], record[1])
@@ -102,16 +106,17 @@ def update_record(record):
             conn.close()
 
 
-def delete_record(user_id, app_name):
+def delete_record(dbname, user_id, app_name):
     """
     Deletes the password for the provided application.
+    :param dbname: Name of Database
     :param user_id:
     :param app_name: application name or 'all'
     :return:
     """
     conn = None
     try:
-        conn = sqlite3.connect('sqlite_db')
+        conn = sqlite3.connect(dbname)
         select_q = "DELETE FROM CIPHER WHERE user_id=?"
         args = (user_id, )
         if app_name != 'all':
@@ -128,10 +133,10 @@ def delete_record(user_id, app_name):
             conn.close()
 
 
-def clear():
+def clear(dbname):
     conn = None
     try:
-        conn = sqlite3.connect('sqlite_db')
+        conn = sqlite3.connect(dbname)
         conn.execute("DROP TABLE CIPHER")
         conn.commit()
     except Error as e:

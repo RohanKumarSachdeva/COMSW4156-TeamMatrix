@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_swagger_ui import get_swaggerui_blueprint
 import logging
 import db
+import os
 import json
 from urllib import parse
 
@@ -35,12 +36,13 @@ app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 
 
 def get_app():
-    db.init_db()
+    app.db = os.environ.get('DB_NAME', 'prod_sqlite_db')
+    db.init_db(app.db)
     return app
 
 
-def clear_app():
-    db.clear()
+def clear_app(dbname):
+    db.clear(dbname)
 
 
 @app.route('/')
@@ -79,11 +81,11 @@ def create():
                         mimetype='application/json')
 
     user_id = request.json['user_email']
-    result = db.get_record(user_id, app_name)
+    result = db.get_record(app.db, user_id, app_name)
     if not result:
         cipher = Cipher()
         encrypt_pw, encryption_key = cipher.encipher(password)
-        db.add_record((user_id, app_name, encrypt_pw, encryption_key))
+        db.add_record(app.db, (user_id, app_name, encrypt_pw, encryption_key))
 
         message = 'Password created successfully!'
         return Response(json.dumps({'data': message}),
@@ -107,7 +109,7 @@ def retrieve():
 
     user_id = request.json['user_email']
 
-    result = db.get_record(user_id, app_name)
+    result = db.get_record(app.db, user_id, app_name)
     passwords = {}
     for row in result:
         cipher = Cipher(key=row[2])
@@ -150,12 +152,12 @@ def update():
                         mimetype='application/json')
 
     user_id = request.json['user_email']
-    result = db.get_record(user_id, app_name)
+    result = db.get_record(app.db, user_id, app_name)
 
     if result:
         cipher = Cipher()
         encrypt_pw, encryption_key = cipher.encipher(password)
-        db.update_record((user_id, app_name, encrypt_pw, encryption_key))
+        db.update_record(app.db, (user_id, app_name, encrypt_pw, encryption_key))
 
         message = 'Password updated successfully!'
         return Response(json.dumps({'data': message}),
@@ -178,14 +180,14 @@ def delete():
                         mimetype='application/json')
 
     user_id = request.json['user_email']
-    result = db.get_record(user_id, app_name)
+    result = db.get_record(app.db, user_id, app_name)
     if not result:
         message = f'Application {app_name} does not exist in the database.'
         return Response(json.dumps({'data': message}),
                         status=NOT_FOUND_STATUS_CODE,
                         mimetype='application/json')
 
-    db.delete_record(user_id, app_name)
+    db.delete_record(app.db, user_id, app_name)
     message = f'Deleted passwords for {app_name} application(s).'
     return Response(json.dumps({'data': message}),
                     status=SUCCESS_STATUS_CODE,
@@ -255,5 +257,6 @@ def strength():
 
 
 if __name__ == '__main__':
-    db.init_db()
+    app.db = os.environ.get('DB_NAME', 'prod_sqlite_db')
+    db.init_db(app.db)
     app.run(host="0.0.0.0", port=5001, debug=True)

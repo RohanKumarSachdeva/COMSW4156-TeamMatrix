@@ -10,10 +10,12 @@ from app import get_app, clear_app
 class test_app(unittest.TestCase):
 
     def setUp(self):
+        os.environ['DB_NAME'] = 'test_sqlite_db'
         self.app = get_app()
+        self.user_email = 'testuser@xyz.com'
 
     def tearDown(self):
-        clear_app()
+        clear_app(self.app.db)
 
     def test_hello(self):
         """
