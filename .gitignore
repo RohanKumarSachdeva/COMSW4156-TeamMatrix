@@ -1,4 +1,6 @@
 .idea/
 .DS_Store
-EncryptionServices/__pycache__/
+encrypt_app/EncryptionServices/__pycache__/
 __pycache__
+encrypt_app/.coverage
+encrypt_app/test_sqlite_db
