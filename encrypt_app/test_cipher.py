@@ -12,17 +12,17 @@ class TestCipher(unittest.TestCase):
         Test for encryption and decryption with valid key
         :return:
         """
-        plaintext_password = "Qwerty123"
-        e_password, key = self.crypt.encipher(plaintext_password)
-        self.assertEqual(self.crypt.decipher(e_password), plaintext_password)
+        plaintext_passcode = "Qwerty123"
+        e_password, key = self.crypt.encipher(plaintext_passcode)
+        self.assertEqual(self.crypt.decipher(e_password), plaintext_passcode)
 
     def test_invalid_decryption(self):
         """
         Test for encryption and decryption with invalid key
         :return:
         """
-        plaintext_password = "Qwerty123"
-        e_password, key = self.crypt.encipher(plaintext_password)
+        plaintext_passcode = "Qwerty123"
+        e_password, key = self.crypt.encipher(plaintext_passcode)
         # Creating new key for decryption
         crypt2 = Cipher()
         with self.assertRaises(Exception):
