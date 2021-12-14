@@ -14,8 +14,8 @@ Go to http://localhost:8111 in your browser.
 import os
 import requests
 import json
-from flask import Flask, request, render_template, g, redirect, Response, flash, session
-
+from flask import Flask, request, abort
+from flask import render_template, redirect, flash, session
 from pip._vendor import cachecontrol
 
 import google
@@ -27,7 +27,8 @@ import pathlib
 
 MATRIX_PASSWORD_MANAGEMENT_API = 'http://0.0.0.0:5001'
 OAUTH_TIMEOUT = 10
-tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+tmpl_dir = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 app.secret_key = 'matrix-client'
 
@@ -38,12 +39,14 @@ file.close()
 app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=OAUTH_TIMEOUT)
 GOOGLE_CLIENT_ID = keys[1]
-client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
+client_secrets_file = os.path.join(
+    pathlib.Path(__file__).parent, "client_secret.json")
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
-    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
+    scopes=["https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
             "openid"],
     redirect_uri="http://127.0.0.1:5000/authorize"
 )
@@ -64,7 +67,8 @@ def login_is_required(function):
 def index():
     if "google_id" in session:
         return redirect('/generate')
-    return "<H1>Welcome to Password Manager, hit login to continue! </H1> <br>" \
+    return "<H1>Welcome to Password Manager, " \
+           "hit login to continue! </H1> <br>" \
            "<a href='/login'><button>Login</button></a>"
 
 
@@ -84,7 +88,8 @@ def authorize():
     credentials = flow.credentials
     request_session = requests.session()
     cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(session=cached_session)
+    token_request = google.auth.transport.requests.Request(
+        session=cached_session)
 
     id_info = id_token.verify_oauth2_token(
         id_token=credentials._id_token,
@@ -129,16 +134,20 @@ def create_password():
         payload = dict()
         payload['password'] = request.form['password']
         if 'pass_strength' in request.form:
-            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/strength',
-                                     params=payload, json={'user_email': session['email']})
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+                                    '/strength', params=payload,
+                                    json={'user_email': session['email']})
             result = json.loads(response.text)['data']
-            flash(f"Password {result['password']} is of {result['label']} strength."
-                  f" It will take {result['estimated_guesses']} guesses to crack it.")
+            flash(f"Password {result['password']} "
+                  f"is of {result['label']} strength."
+                  f" It will take {result['estimated_guesses']}"
+                  f" guesses to crack it.")
             return render_template("create.html", user=session['name'])
 
         payload['application'] = request.form['application']
-        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API + '/create',
-                                   params=payload, json={'user_email': session['email']})
+        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API +
+                                 '/create', params=payload,
+                                 json={'user_email': session['email']})
         message = json.loads(response.text)['data']
         if message:
             flash(message)
@@ -155,16 +164,18 @@ def retrieve_password():
         if 'ret_pass_all' in request.form:
             payload['application'] = 'all'
 
-            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
-                                    params=payload, json={'user_email': session['email']})
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+                                    '/retrieve', params=payload,
+                                    json={'user_email': session['email']})
             results = json.loads(response.text)['data']
 
             for app, passwd in results.items():
                 app_list.append((app, passwd))
         else:
             payload['application'] = request.form['application']
-            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
-                                    params=payload, json={'user_email': session['email']})
+            response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+                                    '/retrieve', params=payload,
+                                    json={'user_email': session['email']})
 
             result = json.loads(response.text)['data']
             for key in result:
@@ -193,14 +204,16 @@ def delete_password():
         payload = dict()
         payload['application'] = request.form['application']
 
-        response = requests.delete(MATRIX_PASSWORD_MANAGEMENT_API + '/delete',
-                                   params=payload, json={'user_email': session['email']})
+        response = requests.delete(MATRIX_PASSWORD_MANAGEMENT_API +
+                                   '/delete', params=payload,
+                                   json={'user_email': session['email']})
         message = json.loads(response.text)['data']
         if message:
             flash(message)
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
-                            params={'application': 'all'}, json={'user_email': session['email']})
+    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+                            '/retrieve', params={'application': 'all'},
+                            json={'user_email': session['email']})
     results = json.loads(response.text)['data']
     data = [key for key in results]
 
@@ -215,14 +228,16 @@ def update_password():
         payload = dict()
         payload['password'] = request.form['password']
         payload['application'] = request.form['application']
-        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API + '/update',
-                                 params=payload, json={'user_email': session['email']})
+        response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API +
+                                 '/update', params=payload,
+                                 json={'user_email': session['email']})
         message = json.loads(response.text)['data']
         if message:
             flash(message)
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
-                            params={'application': 'all'}, json={'user_email': session['email']})
+    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
+                            '/retrieve', params={'application': 'all'},
+                            json={'user_email': session['email']})
     results = json.loads(response.text)['data']
     data = [key for key in results]
 
@@ -237,7 +252,6 @@ def logout():
 
 if __name__ == "__main__":
     import click
-
 
     @click.command()
     @click.option('--debug', is_flag=True)
@@ -260,6 +274,5 @@ if __name__ == "__main__":
         HOST, PORT = host, port
         print("running on %s:%d" % (HOST, PORT))
         app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
-
 
     run()

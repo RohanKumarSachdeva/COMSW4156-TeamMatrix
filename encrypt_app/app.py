@@ -92,7 +92,8 @@ def create():
                         status=SUCCESS_STATUS_CODE,
                         mimetype='application/json')
     else:
-        message = 'A password for this application exists already. Please use /update endpoint.'
+        message = 'A password for this application exists already.' \
+                  'Please use /update endpoint.'
         return Response(json.dumps({'data': message}),
                         status=BAD_REQUEST_STATUS_CODE,
                         mimetype='application/json')
@@ -157,7 +158,9 @@ def update():
     if result:
         cipher = Cipher()
         encrypt_pw, encryption_key = cipher.encipher(password)
-        db.update_record(app.db, (user_id, app_name, encrypt_pw, encryption_key))
+        db.update_record(app.db,
+                         (user_id, app_name,
+                          encrypt_pw, encryption_key))
 
         message = 'Password updated successfully!'
         return Response(json.dumps({'data': message}),
