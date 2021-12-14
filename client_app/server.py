@@ -26,6 +26,14 @@ from datetime import timedelta
 import pathlib
 
 MATRIX_PASSWORD_MANAGEMENT_API = 'http://0.0.0.0:5001'
+
+CREATE_API_ENDPOINT = '/create'
+RETRIEVE_API_ENDPOINT = '/retrieve'
+UPDATE_API_ENDPOINT = '/update'
+DELETE_API_ENDPOINT = '/delete'
+GENERATE_API_ENDPOINT = '/generate'
+STRENGTH_API_ENDPOINT = '/strength'
+
 OAUTH_TIMEOUT = 10
 tmpl_dir = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'templates')
@@ -55,7 +63,6 @@ flow = Flow.from_client_secrets_file(
 def login_is_required(function):
     def wrapper(*args, **kwargs):
         if "google_id" not in session:
-            # return abort(401)  # Authorization required
             return redirect('/')
         else:
             return function()
@@ -117,7 +124,7 @@ def password_gen():
         query_params['spchar'] = 'true' if spchar_bool else 'false'
         query_params['caps'] = 'true' if caps_bool else 'false'
 
-        response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API+'/generate',
+        response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + GENERATE_API_ENDPOINT,
                                 params=query_params,
                                 json={'user_email': session['email']})
 
@@ -135,7 +142,8 @@ def create_password():
         payload['password'] = request.form['password']
         if 'pass_strength' in request.form:
             response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
-                                    '/strength', params=payload,
+                                    STRENGTH_API_ENDPOINT,
+                                    params=payload,
                                     json={'user_email': session['email']})
             result = json.loads(response.text)['data']
             flash(f"Password {result['password']} "
@@ -146,7 +154,8 @@ def create_password():
 
         payload['application'] = request.form['application']
         response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API +
-                                 '/create', params=payload,
+                                 CREATE_API_ENDPOINT,
+                                 params=payload,
                                  json={'user_email': session['email']})
         message = json.loads(response.text)['data']
         if message:
@@ -165,7 +174,8 @@ def retrieve_password():
             payload['application'] = 'all'
 
             response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
-                                    '/retrieve', params=payload,
+                                    RETRIEVE_API_ENDPOINT,
+                                    params=payload,
                                     json={'user_email': session['email']})
             results = json.loads(response.text)['data']
 
@@ -174,7 +184,8 @@ def retrieve_password():
         else:
             payload['application'] = request.form['application']
             response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
-                                    '/retrieve', params=payload,
+                                    RETRIEVE_API_ENDPOINT,
+                                    params=payload,
                                     json={'user_email': session['email']})
 
             result = json.loads(response.text)['data']
@@ -182,7 +193,7 @@ def retrieve_password():
                 message = f"Password for application {key}: {result[key]}"
                 flash(message)
 
-    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + '/retrieve',
+    response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API + RETRIEVE_API_ENDPOINT,
                             params={'application': 'all'},
                             json={'user_email': session['email']})
 
@@ -205,14 +216,16 @@ def delete_password():
         payload['application'] = request.form['application']
 
         response = requests.delete(MATRIX_PASSWORD_MANAGEMENT_API +
-                                   '/delete', params=payload,
+                                   DELETE_API_ENDPOINT,
+                                   params=payload,
                                    json={'user_email': session['email']})
         message = json.loads(response.text)['data']
         if message:
             flash(message)
 
     response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
-                            '/retrieve', params={'application': 'all'},
+                            RETRIEVE_API_ENDPOINT,
+                            params={'application': 'all'},
                             json={'user_email': session['email']})
     results = json.loads(response.text)['data']
     data = [key for key in results]
@@ -229,14 +242,16 @@ def update_password():
         payload['password'] = request.form['password']
         payload['application'] = request.form['application']
         response = requests.post(MATRIX_PASSWORD_MANAGEMENT_API +
-                                 '/update', params=payload,
+                                 UPDATE_API_ENDPOINT,
+                                 params=payload,
                                  json={'user_email': session['email']})
         message = json.loads(response.text)['data']
         if message:
             flash(message)
 
     response = requests.get(MATRIX_PASSWORD_MANAGEMENT_API +
-                            '/retrieve', params={'application': 'all'},
+                            RETRIEVE_API_ENDPOINT,
+                            params={'application': 'all'},
                             json={'user_email': session['email']})
     results = json.loads(response.text)['data']
     data = [key for key in results]
