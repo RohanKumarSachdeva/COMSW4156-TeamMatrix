@@ -20,7 +20,7 @@ def init_db(dbname):
                      'password TEXT, key TEXT)')
         conn.commit()
     except Error as e:
-        raise e
+        print(e)
 
     finally:
         if conn:
@@ -42,7 +42,7 @@ def add_record(dbname, record):
         conn.execute(insert_q, record)
         conn.commit()
     except Error as e:
-        raise e
+        print(e)
 
     finally:
         if conn:
@@ -74,7 +74,7 @@ def get_record(dbname, user_id, app_name):
         for record in cur.execute(select_q, args):
             list_passwords.append((record[0], record[1], record[2]))
     except Error as e:
-        raise e
+        print(e)
 
     finally:
         if conn:
@@ -99,7 +99,7 @@ def update_record(dbname, record):
         cur.execute(update_q, args)
         conn.commit()
     except Error as e:
-        raise e
+        print(e)
 
     finally:
         if conn:
@@ -126,7 +126,7 @@ def delete_record(dbname, user_id, app_name):
         cur.execute(select_q, args)
         conn.commit()
     except Error as e:
-        raise e
+        print(e)
 
     finally:
         if conn:
